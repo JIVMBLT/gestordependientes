@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Pendientes — Gestor Mantto</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#f2f2f7;--surface:#fff;--border:rgba(60,60,67,.18);--border-l:rgba(60,60,67,.1);
@@ -769,66 +770,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 /* ══ USUARIOS — Corellian / BLT Brilliant ══
    TODO: reemplazar por query Supabase tabla usuarios
 ══════════════════════════════════════════ */
-const USUARIOS=[
-  {id:'n8F3G4C2D1qN7I9C5L6',nombre:'Dionisio Gonzalez',rol:'Director General',area:'Direccion',equipo:'Direccion',ini:'DGB',color:'#7c3aed',aut:'Director'},
-  {id:'jH7Kz4mGh9CyZVj4QpYB',nombre:'Fernando Orozco',rol:'Director Ventas',area:'Ventas',equipo:'Ventas',ini:'FO',color:'#2563eb',aut:'Director'},
-  {id:'u003',nombre:'Gabriel Rendon',rol:'Director Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'GR',color:'#059669',aut:'Director'},
-  {id:'u004',nombre:'Jose Luis Verges',rol:'Director Finanzas',area:'Contabilidad',equipo:'Contabilidad',ini:'JLV',color:'#0891b2',aut:'Director'},
-  {id:'u005',nombre:'Jeronimo Riedel',rol:'Jefe Proyectos, Produccion y Logistica',area:'Proyectos',equipo:'Proyectos',ini:'JRIE',color:'#d97706',aut:'Director'},
-  {id:'QDxL5G9Sn0T9S4k11l3pPQ',nombre:'Joseph Vera',rol:'Auxiliar Direccion',area:'Direccion',equipo:'Direccion',ini:'JV',color:'#7c3aed',aut:'Director'},
-  {id:'u007',nombre:'Juan Chavez',rol:'Almacen y Cobranza Proyectos',area:'Ventas',equipo:'Ventas',ini:'JAC',color:'#2563eb',aut:'Director'},
-  {id:'u008',nombre:'Emmanuel Castillo',rol:'Admin Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'EC',color:'#059669',aut:'Usuario'},
-  {id:'u009',nombre:'Alejandro Sanchez',rol:'Control Montaje',area:'Instalaciones',equipo:'Instalaciones',ini:'AS',color:'#059669',aut:'Director'},
-  {id:'u010',nombre:'Alejandro Flores',rol:'Jefe Ajuste',area:'Instalaciones',equipo:'Instalaciones',ini:'ALF',color:'#059669',aut:'Director'},
-  {id:'u011',nombre:'Annay Burgos',rol:'Jefa Administracion Ventas',area:'Ventas',equipo:'Ventas',ini:'AB',color:'#2563eb',aut:'Director'},
-  {id:'u012',nombre:'Alfredo Elizalde',rol:'Admin Cuentas Corp',area:'Ventas',equipo:'Ventas',ini:'AE',color:'#2563eb',aut:'Usuario'},
-  {id:'u013',nombre:'Miguel del Angel',rol:'Jefe de Calidad',area:'Calidad',equipo:'Calidad',ini:'MAA',color:'#0f766e',aut:'Usuario'},
-  {id:'u015',nombre:'Ana Sofia Garcia',rol:'Gerente de Cuentas Corporativas',area:'Ventas',equipo:'Ventas',ini:'ASG',color:'#2563eb',aut:'Usuario'},
-  {id:'u016',nombre:'Miguel Vargas',rol:'Superintendente Instalaciones Occidente',area:'Instalaciones',equipo:'Instalaciones',ini:'MV',color:'#059669',aut:'Usuario'},
-  {id:'u017',nombre:'Ignacio Chavero',rol:'Gerente Comercial Baja California y Sureste',area:'Ventas',equipo:'Ventas',ini:'ICH',color:'#2563eb',aut:'Usuario'},
-  {id:'u018',nombre:'Sergio Torres',rol:'Jefe Juridico',area:'Juridico',equipo:'Juridico',ini:'ST',color:'#dc2626',aut:'Lider'},
-  {id:'u019',nombre:'Jorge Cerilla',rol:'Auxiliar Adminitrativo',area:'Ventas',equipo:'Ventas',ini:'JC',color:'#2563eb',aut:'Usuario'},
-  {id:'u020',nombre:'Aldo Mendez',rol:'Supervisor de Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'AM',color:'#059669',aut:'Usuario'},
-  {id:'u021',nombre:'Denisse Gardu\u00f1o',rol:'Especialista IMSS',area:'Contabilidad',equipo:'Contabilidad',ini:'DG',color:'#0891b2',aut:'Usuario'},
-  {id:'u022',nombre:'Roberto Salazar Ortiz',rol:'Supervisor Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'RS',color:'#059669',aut:'Usuario'},
-  {id:'u023',nombre:'Roberto Leon',rol:'Superintendente Instalaciones Zona Norte',area:'Instalaciones',equipo:'Instalaciones',ini:'RL',color:'#059669',aut:'Usuario'},
-  {id:'u024',nombre:'Ever Hernandez',rol:'Supervisor Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'EH',color:'#059669',aut:'Usuario'},
-  {id:'u025',nombre:'David Martinez',rol:'Supervisor Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'DM',color:'#059669',aut:'Usuario'},
-  {id:'u026',nombre:'Edgar Alday',rol:'Supervisor Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'EA',color:'#059669',aut:'Usuario'},
-  {id:'u027',nombre:'Francisco Resendiz',rol:'Superintendente Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'FR',color:'#059669',aut:'Usuario'},
-  {id:'u028',nombre:'Ana Gabriela Castro',rol:'Recursos Humanos',area:'Recursos Humanos',equipo:'Recursos Humanos',ini:'AGV',color:'#be185d',aut:'Lider'},
-  {id:'u029',nombre:'Ignacio Neri',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'IN',color:'#2563eb',aut:'Usuario'},
-  {id:'u030',nombre:'Diana Hernandez',rol:'Encargada de Seguridad',area:'Instalaciones',equipo:'Instalaciones',ini:'DH',color:'#059669',aut:'Usuario'},
-  {id:'u031',nombre:'Geovany Sanzchez',rol:'Auxiliar Legal',area:'Juridico',equipo:'Juridico',ini:'GS',color:'#dc2626',aut:'Usuario'},
-  {id:'u032',nombre:'Felipe Avila',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'FA',color:'#2563eb',aut:'Usuario'},
-  {id:'u033',nombre:'Ivan Calvillo',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'IC',color:'#2563eb',aut:'Usuario'},
-  {id:'u034',nombre:'Javier Iba\u00f1ez',rol:'Gerente Comercial Zona Norte',area:'Ventas',equipo:'Ventas',ini:'JIB',color:'#2563eb',aut:'Usuario'},
-  {id:'u035',nombre:'Rene Castro',rol:'Ingenieria de Ventas',area:'Ventas',equipo:'Ventas',ini:'RC',color:'#2563eb',aut:'Usuario'},
-  {id:'u036',nombre:'Jorge Sesma',rol:'Ingenieria de Ventas',area:'Ventas',equipo:'Ventas',ini:'JSE',color:'#2563eb',aut:'Usuario'},
-  {id:'u037',nombre:'Fernando Torres',rol:'Jefatura de Logistica',area:'Logistica',equipo:'Logistica',ini:'FIT',color:'#ea580c',aut:'Director'},
-  {id:'u038',nombre:'Jose Luis Ruiz',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'JLR',color:'#2563eb',aut:'Usuario'},
-  {id:'u039',nombre:'Mirla Castellanos',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'MLC',color:'#2563eb',aut:'Usuario'},
-  {id:'u040',nombre:'Enrique Visoso (Baja)',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'EV',color:'#2563eb',aut:'Usuario'},
-  {id:'u041',nombre:'Federico Bojorquez (Baja)',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'FBJ',color:'#2563eb',aut:'Usuario'},
-  {id:'u042',nombre:'Maria Luisa Mayer',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'MLM',color:'#2563eb',aut:'Usuario'},
-  {id:'u043',nombre:'Xochitl Palazuelos',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'XP',color:'#2563eb',aut:'Usuario'},
-  {id:'u044',nombre:'Rodolfo Robles',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'RR',color:'#2563eb',aut:'Usuario'},
-  {id:'u045',nombre:'Arturo Fabian',rol:'Auxiliar Administrativo',area:'Ventas',equipo:'Ventas',ini:'AF',color:'#2563eb',aut:'Usuario'},
-  {id:'u046',nombre:'Yageri Garcia',rol:'Auxiliar Administrativo',area:'Ventas',equipo:'Ventas',ini:'YG',color:'#2563eb',aut:'Usuario'},
-  {id:'u047',nombre:'Lilia Selene Rios',rol:'Auxiliar Administrativo',area:'Ventas',equipo:'Ventas',ini:'LSR',color:'#2563eb',aut:'Usuario'},
-  {id:'u048',nombre:'Hector Obregon',rol:'Auxiliar Administrativo / Almacen MTY',area:'Ventas',equipo:'Ventas',ini:'HO',color:'#2563eb',aut:'Usuario'},
-  {id:'u049',nombre:'Antonio Garcia',rol:'Supervisor de Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'AG',color:'#059669',aut:'Usuario'},
-  {id:'u050',nombre:'Aide Josselin Alvarez',rol:'Auxiliar Administrativo Cuentas Corporativas',area:'Ventas',equipo:'Ventas',ini:'AJA',color:'#2563eb',aut:'Usuario'},
-  {id:'u051',nombre:'Juan Carlos Gardu\u00f1o Garcia',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'JCG',color:'#2563eb',aut:'Usuario'},
-  {id:'u052',nombre:'Fernando Damian Martinez',rol:'Auxiliar Administrativo',area:'Instalaciones',equipo:'Instalaciones',ini:'FDM',color:'#059669',aut:'Director'},
-  {id:'u053',nombre:'Logan Gael Torres',rol:'Auxiliar Administrativo',area:'Instalaciones',equipo:'Instalaciones',ini:'LGT',color:'#059669',aut:'Director'},
-  {id:'u054',nombre:'Grecia Fonseca Guti\u00e9rrez',rol:'Auxiliar Administrativo Cobranza',area:'Ventas',equipo:'Ventas',ini:'GFG',color:'#2563eb',aut:'Usuario'},
-  {id:'u055',nombre:'Andrea Gonzalez Nava',rol:'Analista Administrativo Logistica',area:'Logistica',equipo:'Logistica',ini:'AGN',color:'#ea580c',aut:'Usuario'},
-  {id:'u056',nombre:'Adrian Wolf Garcia',rol:'Costumer Experience (CX)',area:'Direccion',equipo:'Direccion',ini:'AWG',color:'#7c3aed',aut:'Usuario'},
-];
+let USUARIOS=[];
 
 /* ══ STATE ══ */
-const SK='gmantto_pend_v3',LK='gmantto_listas_v1',UK='gmantto_pend_user',AK='gmantto_api_key';
+const UK='gmantto_pend_user',AK='gmantto_api_key';
+const SUPABASE_URL='https://qulldafyewynmwdxkjsf.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_B5tpfugNTnOsHymgxWCrWw_H8Yv9V1e';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+let dbQueue=Promise.resolve();
+let remotePendingIds=new Set(),remoteListaIds=new Set();
 let activeUser=null,activeTab='recordatorios',activeFilter='all',activeSeg='all';
 let captureMode='ia',mTipo='recordatorio',mFormato='normal',pvTipo='recordatorio',pvFormato='normal';
 let pendientes=[],listas=[],menuTargetId=null,delTargetId=null;
@@ -839,14 +789,20 @@ let selectedListaId=null;
 let impFile=null,impReviewList=[],impSelected=new Set(),impTipo='recordatorio';
 
 /* ══ INIT ══ */
-function init(){
+async function init(){
   const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();
-  pendientes=JSON.parse(localStorage.getItem(SK)||'[]');
-  listas=JSON.parse(localStorage.getItem(LK)||'[]');
   apiKey=localStorage.getItem(AK)||'';
-  const uid=localStorage.getItem(UK);
-  if(uid){const u=USUARIOS.find(x=>x.id===uid);if(u)setActiveUser(u,false);}
-  renderUserList();
+  try{
+    await loadSupabaseData();
+    const uid=localStorage.getItem(UK);
+    if(uid){const u=USUARIOS.find(x=>x.id===uid);if(u)setActiveUser(u,false);}
+    renderUserList();
+    if(!USUARIOS.length)showToast('No hay usuarios disponibles en Supabase',5000);
+  }catch(err){
+    console.error('Error inicializando Supabase:',err);
+    showToast(`Error Supabase: ${err.message}`,6000);
+    renderUserList();
+  }
 }
 
 /* ══ USER ══ */
@@ -1434,7 +1390,7 @@ function ejecutarImport(){
   const nuevos=[...impSelected].map(i=>{
     const item=impReviewList[i];const fmt=impItemFormatos[i]||'normal';
     const clItems=fmt==='checklist'?(impItemClItems[i]||[]).filter(x=>x.texto.trim()).map(x=>({id:x.id,texto:x.texto.trim(),completado:false})):[];
-    return{id:genId(),texto:item.texto,texto_original:null,creado_por:activeUser.id,responsable:respId,tipo:impTipo,formato:fmt,checklist_items:clItems,seguimiento_id:null,lista_id:null,modulo_origen:item.modulo_origen||null,registro_id:item.registro_id||null,fecha_limite:null,estatus:'pendiente',fecha_creacion:new Date().toISOString()};
+    return{id:genId(),texto:item.texto,texto_original:null,creado_por:activeUser.id,responsable:respId,tipo:impTipo,formato:fmt,checklist_items:clItems,seguimiento_id:null,lista_id:null,modulo_origen:item.modulo_origen||null,registro_id:item.registro_id||null,fecha_limite:null,estatus:'pendiente',fecha_creacion:new Date().toISOString(),chat:[]};
   });
   pendientes=[...nuevos,...pendientes];savePendientes();
   const destino=impTipo==='recordatorio'?'tus recordatorios':`asignados a ${USUARIOS.find(u=>u.id===respId)?.nombre.split(' ')[0]||'tu equipo'}`;
@@ -1453,8 +1409,70 @@ function executeDel(){if(!delTargetId)return;pendientes=pendientes.filter(p=>p.i
 function scrollToCapture(){openCapturePanel(null);}
 
 /* ══ HELPERS ══ */
-function savePendientes(){localStorage.setItem(SK,JSON.stringify(pendientes));}
-function saveListas(){localStorage.setItem(LK,JSON.stringify(listas));}
+function queueDb(task){
+  dbQueue=dbQueue.then(task).catch(err=>{
+    console.error('Error Supabase:',err);
+    showToast(`Error al guardar: ${err.message}`,5000);
+  });
+  return dbQueue;
+}
+function assertSb(result){if(result.error)throw result.error;return result.data;}
+
+async function loadSupabaseData(){
+  const [uRes,lRes,pRes]=await Promise.all([
+    supabaseClient.from('usuarios').select('*').eq('activo',true).order('equipo').order('nombre'),
+    supabaseClient.from('listas_pendientes').select('*').order('fecha_creacion'),
+    supabaseClient.from('pendientes').select('*,pendiente_checklist_items(*),pendiente_chat(*)').order('fecha_creacion',{ascending:false})
+  ]);
+  const users=assertSb(uRes)||[], dbListas=assertSb(lRes)||[], dbPendientes=assertSb(pRes)||[];
+  USUARIOS=users.map(u=>({id:u.id,nombre:u.nombre,rol:u.rol,area:u.area,equipo:u.equipo,ini:u.iniciales,color:u.color||'#6b7280',aut:u.autorizacion}));
+  listas=dbListas.map(l=>({id:l.id,titulo:l.titulo,creado_por:l.creado_por,fecha_creacion:l.fecha_creacion,open:l.abierta!==false}));
+  pendientes=dbPendientes.map(p=>({
+    id:p.id,texto:p.texto,texto_original:p.texto_original,creado_por:p.creado_por,responsable:p.responsable,
+    tipo:p.tipo,formato:p.formato||'normal',seguimiento_id:p.seguimiento_id,lista_id:p.lista_id,
+    modulo_origen:p.modulo_origen,registro_id:p.registro_id,fecha_limite:p.fecha_limite,
+    estatus:p.estatus,fecha_creacion:p.fecha_creacion,
+    checklist_items:(p.pendiente_checklist_items||[]).sort((a,b)=>(a.orden||0)-(b.orden||0)).map(i=>({id:i.id,texto:i.texto,completado:i.completado})),
+    chat:(p.pendiente_chat||[]).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha)).map(m=>({id:m.id,autor_id:m.autor_id,tipo:m.tipo,contenido:m.contenido,nombre_archivo:m.nombre_archivo,mime_type:m.mime_type,tamaño:m.tamano_bytes,fecha:m.fecha}))
+  }));
+  remotePendingIds=new Set(pendientes.map(p=>p.id));
+  remoteListaIds=new Set(listas.map(l=>l.id));
+}
+
+function savePendientes(){return queueDb(syncPendientesToSupabase);}
+async function syncPendientesToSupabase(){
+  const rows=pendientes.map(p=>({
+    id:p.id,texto:p.texto,texto_original:p.texto_original||null,creado_por:p.creado_por,responsable:p.responsable||null,
+    tipo:p.tipo,formato:p.formato||'normal',seguimiento_id:p.seguimiento_id||null,lista_id:p.lista_id||null,
+    modulo_origen:p.modulo_origen||null,registro_id:p.registro_id||null,fecha_limite:p.fecha_limite||null,
+    estatus:p.estatus||'pendiente',fecha_creacion:p.fecha_creacion||new Date().toISOString(),updated_at:new Date().toISOString()
+  }));
+  if(rows.length)assertSb(await supabaseClient.from('pendientes').upsert(rows,{onConflict:'id'}));
+  const currentIds=new Set(rows.map(r=>r.id));
+  const deleted=[...remotePendingIds].filter(id=>!currentIds.has(id));
+  if(deleted.length)assertSb(await supabaseClient.from('pendientes').delete().in('id',deleted));
+
+  for(const p of pendientes){
+    assertSb(await supabaseClient.from('pendiente_checklist_items').delete().eq('pendiente_id',p.id));
+    const items=(p.checklist_items||[]).map((i,orden)=>({id:i.id,pendiente_id:p.id,texto:i.texto,completado:!!i.completado,orden}));
+    if(items.length)assertSb(await supabaseClient.from('pendiente_checklist_items').insert(items));
+
+    assertSb(await supabaseClient.from('pendiente_chat').delete().eq('pendiente_id',p.id));
+    const msgs=(p.chat||[]).map(m=>({id:m.id,pendiente_id:p.id,autor_id:m.autor_id,tipo:m.tipo,contenido:m.contenido,nombre_archivo:m.nombre_archivo||null,mime_type:m.mime_type||null,tamano_bytes:m.tamaño||m.tamano_bytes||null,fecha:m.fecha||new Date().toISOString()}));
+    if(msgs.length)assertSb(await supabaseClient.from('pendiente_chat').insert(msgs));
+  }
+  remotePendingIds=currentIds;
+}
+
+function saveListas(){return queueDb(syncListasToSupabase);}
+async function syncListasToSupabase(){
+  const rows=listas.map(l=>({id:l.id,titulo:l.titulo,creado_por:l.creado_por,abierta:l.open!==false,fecha_creacion:l.fecha_creacion||new Date().toISOString()}));
+  if(rows.length)assertSb(await supabaseClient.from('listas_pendientes').upsert(rows,{onConflict:'id'}));
+  const currentIds=new Set(rows.map(r=>r.id));
+  const deleted=[...remoteListaIds].filter(id=>!currentIds.has(id));
+  if(deleted.length)assertSb(await supabaseClient.from('listas_pendientes').delete().in('id',deleted));
+  remoteListaIds=currentIds;
+}
 function genId(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).substr(2);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function showHide(id,show){const el=document.getElementById(id);if(!el)return;if(show){el.classList.remove('hidden');el.style.maxHeight='300px';el.style.opacity='1';}else el.classList.add('hidden');}
@@ -1465,20 +1483,43 @@ document.addEventListener('click',e=>{
 });
 
 /* ══ RESP SETTINGS (colores y grupos) ══ */
-const RC_KEY='gmantto_resp_cfg';
 let respCfg={colors:{},groups:[]};
 let cpTarget=null; // {type:'resp'|'group', id}
 const CP_PALETTE=['#ef4444','#f97316','#f59e0b','#84cc16','#10b981','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#6b7280','#111827','#7c3aed'];
 
-function loadRespCfg(){
-  const all=JSON.parse(localStorage.getItem(RC_KEY)||'{}');
-  respCfg=all[activeUser?.id]||{colors:{},groups:[]};
-  if(!respCfg.colors)respCfg.colors={};
-  if(!respCfg.groups)respCfg.groups=[];
+async function loadRespCfg(){
+  respCfg={colors:{},groups:[]};
+  if(!activeUser)return;
+  try{
+    const [cRes,gRes,mRes]=await Promise.all([
+      supabaseClient.from('responsable_colores').select('*').eq('propietario_id',activeUser.id),
+      supabaseClient.from('responsable_grupos').select('*').eq('propietario_id',activeUser.id).order('created_at'),
+      supabaseClient.from('responsable_grupo_miembros').select('*')
+    ]);
+    const colors=assertSb(cRes)||[],groups=assertSb(gRes)||[],members=assertSb(mRes)||[];
+    colors.forEach(c=>respCfg.colors[c.responsable_id]=c.color);
+    respCfg.groups=groups.map(g=>({id:g.id,nombre:g.nombre,color:g.color,miembros:members.filter(m=>m.grupo_id===g.id).map(m=>m.usuario_id)}));
+    renderAll();
+  }catch(err){console.error('No se pudo cargar configuración:',err);showToast(`Error configuración: ${err.message}`,5000);}
 }
-function saveRespCfg(){
-  const all=JSON.parse(localStorage.getItem(RC_KEY)||'{}');
-  all[activeUser.id]=respCfg;localStorage.setItem(RC_KEY,JSON.stringify(all));
+function saveRespCfg(){return queueDb(syncRespCfgToSupabase);}
+async function syncRespCfgToSupabase(){
+  if(!activeUser)return;
+  assertSb(await supabaseClient.from('responsable_colores').delete().eq('propietario_id',activeUser.id));
+  const colors=Object.entries(respCfg.colors||{}).map(([responsable_id,color])=>({propietario_id:activeUser.id,responsable_id,color}));
+  if(colors.length)assertSb(await supabaseClient.from('responsable_colores').insert(colors));
+
+  const old=assertSb(await supabaseClient.from('responsable_grupos').select('id').eq('propietario_id',activeUser.id))||[];
+  const currentIds=new Set((respCfg.groups||[]).map(g=>g.id));
+  const removed=old.map(g=>g.id).filter(id=>!currentIds.has(id));
+  if(removed.length)assertSb(await supabaseClient.from('responsable_grupos').delete().in('id',removed));
+  const groups=(respCfg.groups||[]).map(g=>({id:g.id,propietario_id:activeUser.id,nombre:g.nombre,color:g.color||'#6b7280'}));
+  if(groups.length)assertSb(await supabaseClient.from('responsable_grupos').upsert(groups,{onConflict:'id'}));
+  for(const g of respCfg.groups||[]){
+    assertSb(await supabaseClient.from('responsable_grupo_miembros').delete().eq('grupo_id',g.id));
+    const members=(g.miembros||[]).map(usuario_id=>({grupo_id:g.id,usuario_id}));
+    if(members.length)assertSb(await supabaseClient.from('responsable_grupo_miembros').insert(members));
+  }
 }
 
 /* COLOR PICKER */
