@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Pendientes — Gestor Mantto</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#f2f2f7;--surface:#fff;--border:rgba(60,60,67,.18);--border-l:rgba(60,60,67,.1);
@@ -54,7 +53,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .seg-chip:not(.active):hover{background:var(--seg-b);color:var(--seg-c)}
 
 /* ── CONTENT ── */
-.content{padding:10px 0 100px;max-width:700px;margin:0 auto}
+.content{padding:10px 16px 100px;max-width:700px;margin:0 auto}
 
 /* ── CAPTURE ── */
 .capture-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:14px;box-shadow:var(--shadow)}
@@ -167,12 +166,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .ungrouped-label{font-size:10px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.8px;padding:8px 0 6px}
 
 /* ── PENDIENTE CARD ── */
-.p-card{background:var(--surface);border-radius:var(--r);padding:14px;margin-bottom:0;box-shadow:none;border:none;border-top:1px solid rgba(60,60,67,.1);transition:background .12s,opacity .2s;position:relative}
-.p-card:first-child,.p-card.inside-lista:first-child{border-top:none}
-.p-card.c-left{border-left:4px solid transparent}
-.p-card:hover{background:#f9f9fb}
+.p-card{background:var(--surface);border-radius:var(--r);padding:14px;margin-bottom:8px;box-shadow:var(--shadow);border:none;transition:background .12s,opacity .2s,box-shadow .15s}
+.p-card:hover{box-shadow:var(--shadow-md);background:#fafafe}
 .p-card.resuelto{opacity:.55}
-.p-card.inside-lista{border-radius:0;padding:12px 14px}
+.p-card.c-left{border-left:4px solid transparent!important}
+.p-card.inside-lista{border-radius:0;padding:12px 14px;margin-bottom:0;box-shadow:none;border-top:1px solid rgba(60,60,67,.07)}
+.p-card.inside-lista:first-child{border-top:none}
+.p-card.inside-lista:hover{background:#f5f5fa}
 .card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
 .card-texto{font-size:14px;line-height:1.5;flex:1}
 .card-texto.tachado{text-decoration:line-through;color:var(--tm)}
@@ -181,7 +181,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .s-badge.pendiente{background:var(--sp-b);color:var(--sp-c)}
 .s-badge.en_proceso{background:var(--acc-l);color:var(--acc)}
 .s-badge.resuelto{background:var(--sd-b);color:var(--sd-c)}
-.card-meta{display:flex;flex-wrap:wrap;gap:5px}
+.card-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
 .mtag{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--tm);background:rgba(120,120,128,.1);padding:2px 8px;border-radius:var(--pill)}
 .mtag.mod{color:var(--acc);background:var(--acc-l);font-weight:500}
 .mtag.vence{color:var(--sp-c);background:var(--sp-b)}
@@ -189,7 +189,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .mtag.resp{color:var(--sd-c);background:var(--sd-b);font-weight:500}
 .mtag.seg{color:var(--seg-c);background:var(--seg-b);font-weight:600}
 .mtag.gen{color:var(--sc-c);background:var(--sc-b);font-weight:500}
-.card-actions{display:flex;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--border);flex-wrap:wrap}
+.card-actions{display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(60,60,67,.08);flex-wrap:wrap}
 .act-btn{padding:5px 12px;border-radius:var(--pill);border:none;background:rgba(120,120,128,.1);font-size:12px;color:var(--t2);cursor:pointer;transition:all .2s;font-weight:500}
 .act-btn:hover{background:rgba(120,120,128,.18)}
 .act-btn.resolve{color:var(--sd-c);background:var(--sd-b)}
@@ -198,7 +198,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .act-btn.del:hover{background:#ffd5d2}
 
 /* ── CHECKLIST IN CARD ── */
-.cl-progress-wrap{margin-bottom:10px}
+.cl-progress-wrap{margin-bottom:8px}
 .cl-progress-info{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .cl-progress-label{font-size:11px;font-weight:600;color:var(--t2)}
 .cl-progress-pct{font-size:11px;font-weight:700;color:var(--acc)}
@@ -209,8 +209,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .cl-items{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
 .cl-item{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:var(--rsm);transition:background .1s}
 .cl-item:hover{background:var(--bg)}
-.cl-check{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s}
-.cl-check.done{background:var(--sd-c);border-color:var(--sd-c);color:#fff}
+.cl-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--acc);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:all .2s;color:#fff;background:transparent}
+.cl-check.done{background:var(--sd-c);border-color:var(--sd-c)}
 .cl-item-text{font-size:13px;flex:1;line-height:1.4;cursor:text;outline:none;min-width:0}
 .cl-item-text[contenteditable="true"]{background:var(--acc-l);border-radius:3px;padding:1px 4px;}
 .cl-item-text.done{text-decoration:line-through;color:var(--tm)}
@@ -278,6 +278,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 /* Import review */
 .imp-review-header{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--sd-c)}
 .imp-review-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;box-shadow:var(--shadow)}
+.imp-text-edit{width:100%;padding:5px 8px;border:1.5px solid transparent;border-radius:var(--rsm);font-size:13px;font-family:inherit;background:transparent;color:var(--t1);transition:border-color .15s;outline:none}
+.imp-text-edit:hover{border-color:var(--border);background:var(--bg)}
+.imp-text-edit:focus{border-color:var(--acc);background:var(--surface)}
+.imp-item-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:7px}
+.imp-expand-btn{margin-left:auto;padding:3px 8px;border:none;background:rgba(120,120,128,.1);border-radius:var(--pill);font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.imp-expand-btn:hover{background:rgba(120,120,128,.18);color:var(--t1)}
+.imp-item-detail{margin-top:9px;padding-top:9px;border-top:1px solid var(--border-l);display:flex;flex-direction:column;gap:8px}
+.imp-detail-row{display:flex;align-items:center;gap:10px}
+.imp-detail-lbl{font-size:11px;font-weight:700;color:var(--tm);width:80px;flex-shrink:0}
+.imp-merge-bar{background:#fff4de;border:1px solid #ff9500;border-radius:var(--rsm);padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px;font-size:13px}
+.imp-merge-bar b{color:var(--sp-c)}
+.btn-imp-merge{padding:6px 14px;background:var(--sp-c);color:#fff;border:none;border-radius:var(--pill);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-imp-merge:hover{background:#e08500}
+.imp-merge-input-row{background:#fff4de;border:1px solid #ff9500;border-radius:var(--rsm);padding:10px 12px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px}
+.imp-merge-input-row input{width:100%;padding:8px 10px;border:1.5px solid #ffc107;border-radius:var(--rsm);font-size:14px;font-family:inherit;background:#fff}
+.imp-merge-input-row input:focus{outline:none;border-color:var(--sp-c)}
+.imp-merge-actions{display:flex;gap:8px}
+.btn-imp-merge-ok{flex:1;padding:8px;background:var(--sp-c);color:#fff;border:none;border-radius:var(--rsm);font-size:13px;font-weight:700;cursor:pointer}
+.btn-imp-merge-cancel{padding:8px 12px;background:none;border:1px solid var(--border);border-radius:var(--rsm);font-size:13px;color:var(--t2);cursor:pointer}
 .imp-review-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
 .imp-review-chk{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;transition:all .15s}
 .imp-review-chk.on{background:var(--acc);border-color:var(--acc)}
@@ -483,7 +502,62 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .chat-send-btn:hover{background:var(--acc-d)}
 .chat-visibility-note{font-size:11px;color:var(--tm);text-align:center;padding:6px;font-style:italic}
 
-/* ── PDF EXPORT ── */
+/* ── VOICE BUBBLE (floating pill) ── */
+.voice-bubble{position:fixed;bottom:28px;right:20px;z-index:20;display:flex;align-items:center;gap:8px;padding:11px 18px 11px 14px;background:var(--surface);border-radius:var(--pill);box-shadow:0 4px 18px rgba(0,0,0,.12),0 2px 6px rgba(0,0,0,.07);cursor:pointer;border:none;font-size:14px;font-weight:600;color:var(--t1);transition:all .2s;white-space:nowrap}
+.voice-bubble:hover{box-shadow:0 6px 24px rgba(0,0,0,.15);transform:translateY(-1px)}
+.voice-bubble:active{transform:translateY(0) scale(.97)}
+.voice-bubble.idle{color:var(--t1)}
+.voice-bubble.recording{background:var(--danger-b);color:var(--danger);box-shadow:0 4px 18px rgba(255,59,48,.22)}
+.voice-bubble.analyzing{background:var(--acc-l);color:var(--acc);box-shadow:0 4px 18px rgba(0,122,255,.18)}
+.vb-icon{font-size:18px;line-height:1}
+.vb-label{font-size:13px;font-weight:600;letter-spacing:-.2px}
+.vb-dots{display:flex;gap:3px;align-items:center}
+@keyframes vb-dot-pulse{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.vb-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:vb-dot-pulse 1.1s infinite ease-in-out}
+.vb-dot:nth-child(2){animation-delay:.15s}
+.vb-dot:nth-child(3){animation-delay:.3s}
+
+/* ── SECTION ADD BUTTONS ── */
+.section-add-btn{display:flex;align-items:center;gap:10px;padding:13px 16px;background:var(--surface);border:none;border-radius:var(--r);font-size:15px;color:var(--acc);cursor:pointer;width:100%;font-weight:500;margin-top:8px;transition:background .12s;text-align:left;letter-spacing:-.2px;box-shadow:var(--shadow)}
+.section-add-btn:hover{background:var(--acc-l)}
+.section-add-btn:active{background:#d4e8ff}
+.section-add-icon{width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:400;line-height:1}
+
+/* ── VOICE PANEL ── */
+.voice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:32;display:none;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.voice-overlay.on{display:block}
+.voice-panel{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-radius:22px 22px 0 0;z-index:33;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);max-height:70vh;display:flex;flex-direction:column}
+.voice-panel.open{transform:translateY(0)}
+.voice-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;flex-shrink:0}
+.voice-panel-body{padding:20px 24px 28px;flex:1;overflow-y:auto}
+.voice-state-icon{font-size:48px;text-align:center;margin-bottom:12px}
+.voice-state-title{font-size:17px;font-weight:700;text-align:center;letter-spacing:-.3px;margin-bottom:6px}
+.voice-state-sub{font-size:13px;color:var(--tm);text-align:center;margin-bottom:18px}
+.voice-transcript{background:var(--bg);border-radius:var(--r);padding:14px;font-size:15px;line-height:1.6;color:var(--t1);min-height:60px;max-height:140px;overflow-y:auto;margin-bottom:16px;border:1.5px solid var(--border-l)}
+.voice-transcript.recording{border-color:var(--danger);background:rgba(255,59,48,.03)}
+.voice-transcript.empty{color:var(--tm);font-style:italic}
+@keyframes voice-dot{0%,80%,100%{transform:scale(0);opacity:.5}40%{transform:scale(1);opacity:1}}
+.voice-dots{display:flex;gap:5px;justify-content:center;margin-bottom:16px}
+.voice-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);animation:voice-dot 1.2s infinite ease-in-out}
+.voice-dot:nth-child(2){animation-delay:.16s}
+.voice-dot:nth-child(3){animation-delay:.32s}
+.btn-voice-stop{width:100%;padding:14px;background:var(--danger);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:-.2px}
+.btn-voice-stop:hover{background:#e02d23}
+.btn-voice-cancel{width:100%;padding:10px;background:none;border:none;color:var(--tm);font-size:14px;cursor:pointer;margin-top:6px}
+.btn-voice-retry{width:100%;padding:13px;background:var(--acc);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:all .15s}
+
+/* ── VOICE PERSONAS CHIPS (in preview) ── */
+.voice-personas-section{background:var(--bg);border-radius:var(--r);padding:12px;margin-bottom:12px;border:1.5px solid var(--border-l)}
+.voice-personas-title{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:block}
+.persona-chips{display:flex;flex-wrap:wrap;gap:7px}
+.persona-chip{display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:var(--pill);cursor:pointer;transition:all .2s;border:1.5px solid transparent;user-select:none;-webkit-user-select:none}
+.persona-chip.asignar{border-color:var(--acc);background:var(--acc-l);color:var(--acc)}
+.persona-chip.seguimiento{border-color:var(--seg-c);background:var(--seg-b);color:var(--seg-c)}
+.persona-chip.ignorar{border-color:var(--border);background:var(--bg);color:var(--tm)}
+.persona-chip-name{font-size:13px;font-weight:600}
+.persona-chip-rol{font-size:10px;font-weight:500}
+.persona-chip-hint{font-size:11px;color:var(--tm);margin-top:6px}
+
 .pdf-export-btn{width:34px;height:34px;border-radius:50%;border:none;background:var(--surface);color:var(--acc);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.1);transition:all .15s;flex-shrink:0}
 .pdf-export-btn:hover{background:var(--acc-l)}
 .pdf-modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:80;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
@@ -504,7 +578,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .btn-pdf-gen:disabled{background:rgba(120,120,128,.2);color:var(--tm);cursor:not-allowed}
 .btn-pdf-cancel{width:100%;padding:12px;background:none;border:none;color:var(--t2);font-size:15px;cursor:pointer;margin-top:8px}
 
-/* ── PRINT ── */
+/* ── CHECKLIST COLLAPSE IN CARD ── */
+.cl-items-wrap{display:none;flex-direction:column;gap:4px;margin-top:8px}
+.p-card.cl-expanded .cl-items-wrap{display:flex}
+.cl-progress-wrap{cursor:pointer;user-select:none;-webkit-user-select:none;margin-bottom:0}
+.cl-progress-wrap:hover{opacity:.85}
+.cl-chevron{font-size:10px;color:var(--tm);display:inline-block;transition:transform .2s;margin-left:2px}
+.p-card.cl-expanded .cl-chevron{transform:rotate(90deg)}
+.cl-toggle-lbl{font-size:10px;color:var(--tm);margin-left:auto}
+.p-card.cl-expanded .cl-toggle-lbl::after{content:'Ocultar'}
+.p-card:not(.cl-expanded) .cl-toggle-lbl::after{content:'Ver items'}
+
+/* card clickable */
+.card-clickable{cursor:pointer;flex:1;min-width:0}
+.card-clickable:hover .card-texto{color:var(--acc)}
+
 @media print{
   .app-header,.fab,.cap-panel,.cap-overlay,.detail-panel,.grp-panel,.grp-overlay,
   .color-picker-pop,.s-menu,.confirm-ov,.id-modal,.pdf-modal-ov,
@@ -566,7 +654,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 
   <div class="api-banner" id="api-banner">
     <b>⚙️ Configura tu API Key de Anthropic</b>
-    La clave se configura directamente en el archivo para esta prueba controlada.
+    Para usar modo IA e Importar. Solo se guarda en este dispositivo.
     <div class="api-row">
       <input type="password" class="api-input" id="api-key-inp" placeholder="sk-ant-…">
       <button class="api-btn" onclick="saveApiKey()">Guardar</button>
@@ -587,7 +675,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 
 </main>
 
-<button class="fab" id="fab-btn" onclick="openCapturePanel(null)" style="display:none">＋</button>
+<!-- VOICE BUBBLE (floating pill) -->
+<button class="voice-bubble" id="voice-bubble" onclick="handleVoiceBubble()" style="display:none">
+  <span class="vb-icon" id="vb-icon">🎙️</span>
+  <span class="vb-dots" id="vb-dots" style="display:none">
+    <span class="vb-dot"></span><span class="vb-dot"></span><span class="vb-dot"></span>
+  </span>
+  <span class="vb-label" id="vb-label">Dictar</span>
+</button>
+
+<!-- VOICE RECORDING PANEL -->
+<div class="voice-overlay" id="voice-overlay"></div>
+<div class="voice-panel" id="voice-panel">
+  <div class="voice-handle"></div>
+  <div class="voice-panel-body" id="voice-panel-body"></div>
+</div>
 
 <!-- ── CAPTURE OVERLAY + PANEL ── -->
 <div class="cap-overlay" id="cap-overlay" onclick="closeCapturePanel()"></div>
@@ -770,17 +872,66 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 /* ══ USUARIOS — Corellian / BLT Brilliant ══
    TODO: reemplazar por query Supabase tabla usuarios
 ══════════════════════════════════════════ */
-let USUARIOS=[];
+const USUARIOS=[
+  {id:'n8F3G4C2D1qN7I9C5L6',nombre:'Dionisio Gonzalez',rol:'Director General',area:'Direccion',equipo:'Direccion',ini:'DGB',color:'#7c3aed',aut:'Director'},
+  {id:'jH7Kz4mGh9CyZVj4QpYB',nombre:'Fernando Orozco',rol:'Director Ventas',area:'Ventas',equipo:'Ventas',ini:'FO',color:'#2563eb',aut:'Director'},
+  {id:'u003',nombre:'Gabriel Rendon',rol:'Director Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'GR',color:'#059669',aut:'Director'},
+  {id:'u004',nombre:'Jose Luis Verges',rol:'Director Finanzas',area:'Contabilidad',equipo:'Contabilidad',ini:'JLV',color:'#0891b2',aut:'Director'},
+  {id:'u005',nombre:'Jeronimo Riedel',rol:'Jefe Proyectos, Produccion y Logistica',area:'Proyectos',equipo:'Proyectos',ini:'JRIE',color:'#d97706',aut:'Director'},
+  {id:'QDxL5G9Sn0T9S4k11l3pPQ',nombre:'Joseph Vera',rol:'Auxiliar Direccion',area:'Direccion',equipo:'Direccion',ini:'JV',color:'#7c3aed',aut:'Director'},
+  {id:'u007',nombre:'Juan Chavez',rol:'Almacen y Cobranza Proyectos',area:'Ventas',equipo:'Ventas',ini:'JAC',color:'#2563eb',aut:'Director'},
+  {id:'u008',nombre:'Emmanuel Castillo',rol:'Admin Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'EC',color:'#059669',aut:'Usuario'},
+  {id:'u009',nombre:'Alejandro Sanchez',rol:'Control Montaje',area:'Instalaciones',equipo:'Instalaciones',ini:'AS',color:'#059669',aut:'Director'},
+  {id:'u010',nombre:'Alejandro Flores',rol:'Jefe Ajuste',area:'Instalaciones',equipo:'Instalaciones',ini:'ALF',color:'#059669',aut:'Director'},
+  {id:'u011',nombre:'Annay Burgos',rol:'Jefa Administracion Ventas',area:'Ventas',equipo:'Ventas',ini:'AB',color:'#2563eb',aut:'Director'},
+  {id:'u012',nombre:'Alfredo Elizalde',rol:'Admin Cuentas Corp',area:'Ventas',equipo:'Ventas',ini:'AE',color:'#2563eb',aut:'Usuario'},
+  {id:'u013',nombre:'Miguel del Angel',rol:'Jefe de Calidad',area:'Calidad',equipo:'Calidad',ini:'MAA',color:'#0f766e',aut:'Usuario'},
+  {id:'u015',nombre:'Ana Sofia Garcia',rol:'Gerente de Cuentas Corporativas',area:'Ventas',equipo:'Ventas',ini:'ASG',color:'#2563eb',aut:'Usuario'},
+  {id:'u016',nombre:'Miguel Vargas',rol:'Superintendente Instalaciones Occidente',area:'Instalaciones',equipo:'Instalaciones',ini:'MV',color:'#059669',aut:'Usuario'},
+  {id:'u017',nombre:'Ignacio Chavero',rol:'Gerente Comercial Baja California y Sureste',area:'Ventas',equipo:'Ventas',ini:'ICH',color:'#2563eb',aut:'Usuario'},
+  {id:'u018',nombre:'Sergio Torres',rol:'Jefe Juridico',area:'Juridico',equipo:'Juridico',ini:'ST',color:'#dc2626',aut:'Lider'},
+  {id:'u019',nombre:'Jorge Cerilla',rol:'Auxiliar Adminitrativo',area:'Ventas',equipo:'Ventas',ini:'JC',color:'#2563eb',aut:'Usuario'},
+  {id:'u020',nombre:'Aldo Mendez',rol:'Supervisor de Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'AM',color:'#059669',aut:'Usuario'},
+  {id:'u021',nombre:'Denisse Gardu\u00f1o',rol:'Especialista IMSS',area:'Contabilidad',equipo:'Contabilidad',ini:'DG',color:'#0891b2',aut:'Usuario'},
+  {id:'u022',nombre:'Roberto Salazar Ortiz',rol:'Supervisor Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'RS',color:'#059669',aut:'Usuario'},
+  {id:'u023',nombre:'Roberto Leon',rol:'Superintendente Instalaciones Zona Norte',area:'Instalaciones',equipo:'Instalaciones',ini:'RL',color:'#059669',aut:'Usuario'},
+  {id:'u024',nombre:'Ever Hernandez',rol:'Supervisor Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'EH',color:'#059669',aut:'Usuario'},
+  {id:'u025',nombre:'David Martinez',rol:'Supervisor Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'DM',color:'#059669',aut:'Usuario'},
+  {id:'u026',nombre:'Edgar Alday',rol:'Supervisor Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'EA',color:'#059669',aut:'Usuario'},
+  {id:'u027',nombre:'Francisco Resendiz',rol:'Superintendente Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'FR',color:'#059669',aut:'Usuario'},
+  {id:'u028',nombre:'Ana Gabriela Castro',rol:'Recursos Humanos',area:'Recursos Humanos',equipo:'Recursos Humanos',ini:'AGV',color:'#be185d',aut:'Lider'},
+  {id:'u029',nombre:'Ignacio Neri',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'IN',color:'#2563eb',aut:'Usuario'},
+  {id:'u030',nombre:'Diana Hernandez',rol:'Encargada de Seguridad',area:'Instalaciones',equipo:'Instalaciones',ini:'DH',color:'#059669',aut:'Usuario'},
+  {id:'u031',nombre:'Geovany Sanzchez',rol:'Auxiliar Legal',area:'Juridico',equipo:'Juridico',ini:'GS',color:'#dc2626',aut:'Usuario'},
+  {id:'u032',nombre:'Felipe Avila',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'FA',color:'#2563eb',aut:'Usuario'},
+  {id:'u033',nombre:'Ivan Calvillo',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'IC',color:'#2563eb',aut:'Usuario'},
+  {id:'u034',nombre:'Javier Iba\u00f1ez',rol:'Gerente Comercial Zona Norte',area:'Ventas',equipo:'Ventas',ini:'JIB',color:'#2563eb',aut:'Usuario'},
+  {id:'u035',nombre:'Rene Castro',rol:'Ingenieria de Ventas',area:'Ventas',equipo:'Ventas',ini:'RC',color:'#2563eb',aut:'Usuario'},
+  {id:'u036',nombre:'Jorge Sesma',rol:'Ingenieria de Ventas',area:'Ventas',equipo:'Ventas',ini:'JSE',color:'#2563eb',aut:'Usuario'},
+  {id:'u037',nombre:'Fernando Torres',rol:'Jefatura de Logistica',area:'Logistica',equipo:'Logistica',ini:'FIT',color:'#ea580c',aut:'Director'},
+  {id:'u038',nombre:'Jose Luis Ruiz',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'JLR',color:'#2563eb',aut:'Usuario'},
+  {id:'u039',nombre:'Mirla Castellanos',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'MLC',color:'#2563eb',aut:'Usuario'},
+  {id:'u040',nombre:'Enrique Visoso (Baja)',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'EV',color:'#2563eb',aut:'Usuario'},
+  {id:'u041',nombre:'Federico Bojorquez (Baja)',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'FBJ',color:'#2563eb',aut:'Usuario'},
+  {id:'u042',nombre:'Maria Luisa Mayer',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'MLM',color:'#2563eb',aut:'Usuario'},
+  {id:'u043',nombre:'Xochitl Palazuelos',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'XP',color:'#2563eb',aut:'Usuario'},
+  {id:'u044',nombre:'Rodolfo Robles',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'RR',color:'#2563eb',aut:'Usuario'},
+  {id:'u045',nombre:'Arturo Fabian',rol:'Auxiliar Administrativo',area:'Ventas',equipo:'Ventas',ini:'AF',color:'#2563eb',aut:'Usuario'},
+  {id:'u046',nombre:'Yageri Garcia',rol:'Auxiliar Administrativo',area:'Ventas',equipo:'Ventas',ini:'YG',color:'#2563eb',aut:'Usuario'},
+  {id:'u047',nombre:'Lilia Selene Rios',rol:'Auxiliar Administrativo',area:'Ventas',equipo:'Ventas',ini:'LSR',color:'#2563eb',aut:'Usuario'},
+  {id:'u048',nombre:'Hector Obregon',rol:'Auxiliar Administrativo / Almacen MTY',area:'Ventas',equipo:'Ventas',ini:'HO',color:'#2563eb',aut:'Usuario'},
+  {id:'u049',nombre:'Antonio Garcia',rol:'Supervisor de Instalaciones',area:'Instalaciones',equipo:'Instalaciones',ini:'AG',color:'#059669',aut:'Usuario'},
+  {id:'u050',nombre:'Aide Josselin Alvarez',rol:'Auxiliar Administrativo Cuentas Corporativas',area:'Ventas',equipo:'Ventas',ini:'AJA',color:'#2563eb',aut:'Usuario'},
+  {id:'u051',nombre:'Juan Carlos Gardu\u00f1o Garcia',rol:'Asesor Comercial',area:'Ventas',equipo:'Ventas',ini:'JCG',color:'#2563eb',aut:'Usuario'},
+  {id:'u052',nombre:'Fernando Damian Martinez',rol:'Auxiliar Administrativo',area:'Instalaciones',equipo:'Instalaciones',ini:'FDM',color:'#059669',aut:'Director'},
+  {id:'u053',nombre:'Logan Gael Torres',rol:'Auxiliar Administrativo',area:'Instalaciones',equipo:'Instalaciones',ini:'LGT',color:'#059669',aut:'Director'},
+  {id:'u054',nombre:'Grecia Fonseca Guti\u00e9rrez',rol:'Auxiliar Administrativo Cobranza',area:'Ventas',equipo:'Ventas',ini:'GFG',color:'#2563eb',aut:'Usuario'},
+  {id:'u055',nombre:'Andrea Gonzalez Nava',rol:'Analista Administrativo Logistica',area:'Logistica',equipo:'Logistica',ini:'AGN',color:'#ea580c',aut:'Usuario'},
+  {id:'u056',nombre:'Adrian Wolf Garcia',rol:'Costumer Experience (CX)',area:'Direccion',equipo:'Direccion',ini:'AWG',color:'#7c3aed',aut:'Usuario'},
+];
 
 /* ══ STATE ══ */
-const UK='gmantto_pend_user';
-const SUPABASE_URL='https://qulldafyewynmwdxkjsf.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY='sb_publishable_B5tpfugNTnOsHymgxWCrWw_H8Yv9V1e';
-// REEMPLAZA SOLO EL TEXTO ENTRE COMILLAS ANTES DE PUBLICAR EN GITHUB PAGES.
-const ANTHROPIC_API_KEY='__ANTHROPIC_API_KEY__';
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-let dbQueue=Promise.resolve();
-let remotePendingIds=new Set(),remoteListaIds=new Set();
+const SK='gmantto_pend_v3',LK='gmantto_listas_v1',UK='gmantto_pend_user',AK='gmantto_api_key';
 let activeUser=null,activeTab='recordatorios',activeFilter='all',activeSeg='all';
 let captureMode='ia',mTipo='recordatorio',mFormato='normal',pvTipo='recordatorio',pvFormato='normal';
 let pendientes=[],listas=[],menuTargetId=null,delTargetId=null;
@@ -789,22 +940,17 @@ let calYear,calMonth,calSelected=null;
 let mClItems=[],pvClItems=[];
 let selectedListaId=null;
 let impFile=null,impReviewList=[],impSelected=new Set(),impTipo='recordatorio';
+let impMergeMode=false,impMergeTitle='';
 
 /* ══ INIT ══ */
-async function init(){
+function init(){
   const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();
-  apiKey=ANTHROPIC_API_KEY;
-  try{
-    await loadSupabaseData();
-    const uid=localStorage.getItem(UK);
-    if(uid){const u=USUARIOS.find(x=>x.id===uid);if(u)setActiveUser(u,false);}
-    renderUserList();
-    if(!USUARIOS.length)showToast('No hay usuarios disponibles en Supabase',5000);
-  }catch(err){
-    console.error('Error inicializando Supabase:',err);
-    showToast(`Error Supabase: ${err.message}`,6000);
-    renderUserList();
-  }
+  pendientes=JSON.parse(localStorage.getItem(SK)||'[]');
+  listas=JSON.parse(localStorage.getItem(LK)||'[]');
+  apiKey=localStorage.getItem(AK)||'';
+  const uid=localStorage.getItem(UK);
+  if(uid){const u=USUARIOS.find(x=>x.id===uid);if(u)setActiveUser(u,false);}
+  renderUserList();
 }
 
 /* ══ USER ══ */
@@ -813,7 +959,7 @@ function setActiveUser(u,save=true){
   document.getElementById('hdr-av').textContent=u.ini;
   document.getElementById('hdr-av').style.background=u.color;
   document.getElementById('hdr-name').textContent=u.nombre;
-  document.getElementById('fab-btn').style.display='flex';
+  document.getElementById('voice-bubble').style.display='flex';
   document.getElementById('pdf-btn').style.display='flex';
   document.getElementById('no-user-msg').style.display='none';
   if(!apiKey)document.getElementById('api-banner').classList.add('on');
@@ -856,7 +1002,10 @@ function populateListaSelect(){
 
 /* ══ API KEY ══ */
 function saveApiKey(){
-  showToast('La API Key se configura directamente en el archivo index.html');
+  const v=document.getElementById('api-key-inp').value.trim();
+  if(!v.startsWith('sk-ant-')){showToast('⚠️ Clave inválida');return;}
+  apiKey=v;localStorage.setItem(AK,v);document.getElementById('api-banner').classList.remove('on');
+  document.getElementById('api-key-inp').value='';showToast('✅ API Key guardada');
 }
 
 /* ══ TABS ══ */
@@ -976,7 +1125,7 @@ function mostrarPreview(json){
   const badge=document.getElementById('conf-badge');badge.textContent={alta:'🟢 Alta',media:'🟡 Revisar',baja:'🔴 Verificar'}[json.confianza]||'—';badge.className=`conf-badge ${json.confianza||''}`;
   document.getElementById('preview-card').classList.add('on');document.getElementById('preview-card').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function volverCaptura(){document.getElementById('preview-card').classList.remove('on');document.getElementById('btn-procesar').disabled=false;}
+// volverCaptura defined below
 function guardarDesdePreview(){
   const tarea=document.getElementById('pv-tarea').value.trim();if(!tarea)return;
   const respId=pvTipo==='asignado'?(document.getElementById('pv-resp').value||null):activeUser.id;
@@ -1064,11 +1213,16 @@ function renderListaSection(){
   const ungrouped=myRecs.filter(p=>!p.lista_id).filter(p=>applyFilter(p)&&applyFiltroSeg(p));
   ungrouped.sort((a,b)=>{if(a.estatus==='resuelto'&&b.estatus!=='resuelto')return 1;if(b.estatus==='resuelto'&&a.estatus!=='resuelto')return -1;return new Date(b.fecha_creacion)-new Date(a.fecha_creacion);});
   if(ungrouped.length){html+=`<div class="ungrouped-label">Sin lista</div>`;ungrouped.forEach(p=>{html+=renderCard(p,false);});}
-  if(!myListas.length&&!ungrouped.length)html+=`<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">Sin recordatorios</div><div class="empty-sub">Escribe o dicta uno arriba, o crea una lista para agruparlos</div></div>`;
+  if(!myListas.length&&!ungrouped.length)html+=`<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">Sin recordatorios</div><div class="empty-sub">Toca el botón de abajo para crear uno</div></div>`;
+  html+=`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('recordatorio');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Nuevo recordatorio</button>`;
   document.getElementById('lista-pendientes').innerHTML=html;
 }
 
 /* ══ CHECKLIST CARD ACTIONS ══ */
+function toggleClExpand(id){
+  const card=document.getElementById(`card-${id}`);
+  if(card)card.classList.toggle('cl-expanded');
+}
 function toggleClItem(pendienteId,itemId){
   const p=pendientes.find(x=>x.id===pendienteId);if(!p||!p.checklist_items)return;
   const it=p.checklist_items.find(i=>i.id===itemId);if(!it)return;
@@ -1148,7 +1302,7 @@ function renderLista(){
   if(activeTab==='recordatorios'&&activeSeg!=='all')list=list.filter(p=>p.seguimiento_id===activeSeg);
 
   if(activeTab==='asignados_por_mi'){
-    if(!list.length){document.getElementById('lista-pendientes').innerHTML=`<div class="empty"><div class="empty-icon">📤</div><div class="empty-title">No has asignado nada</div><div class="empty-sub">Crea un pendiente y asígnalo a alguien de tu equipo</div></div>`;return;}
+    if(!list.length){document.getElementById('lista-pendientes').innerHTML=`<div class="empty"><div class="empty-icon">📤</div><div class="empty-title">No has asignado nada</div><div class="empty-sub">Toca el botón de abajo para asignar un pendiente</div></div><button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('asignado');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Asignar pendiente</button>`;return;}
     const PALETTE=['#ef4444','#f97316','#f59e0b','#84cc16','#10b981','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#6b7280'];
     let h=`<div class="config-bar"><button class="btn-manage-groups" onclick="openGroupPanel()">⚙️ Grupos y colores</button></div>`;
     // 1. Render groups
@@ -1204,10 +1358,12 @@ function renderLista(){
       items.forEach(p=>{h+=renderCard(p,false,hdrColor);});
       h+=`</div></div>`;
     });
-    document.getElementById('lista-pendientes').innerHTML=h;return;
+    document.getElementById('lista-pendientes').innerHTML=h+`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('asignado');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Asignar pendiente</button>`;return;
   }
   list.sort((a,b)=>{if(a.estatus==='resuelto'&&b.estatus!=='resuelto')return 1;if(b.estatus==='resuelto'&&a.estatus!=='resuelto')return -1;return new Date(b.fecha_creacion)-new Date(a.fecha_creacion);});
-  document.getElementById('lista-pendientes').innerHTML=list.length?list.map(p=>renderCard(p,false)).join(''):renderEmpty();
+  const addBtn=(['general','asignados_a_mi','fechas'].includes(activeTab))?'':
+    activeTab==='general'?`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>setCaptureMode('manual'),60)"><div class="section-add-icon">＋</div>Nuevo pendiente</button>`:'';
+  document.getElementById('lista-pendientes').innerHTML=(list.length?list.map(p=>renderCard(p,false)).join(''):renderEmpty())+addBtn;
 }
 
 function renderCard(p,insideLista,borderColor){
@@ -1224,11 +1380,24 @@ function renderCard(p,insideLista,borderColor){
   let clBlock='';
   if(p.formato==='checklist'&&p.checklist_items?.length){
     const total=p.checklist_items.length,done=p.checklist_items.filter(i=>i.completado).length,pct=Math.round(done/total*100);
-    const barCls=pct===100?'done':'';const pctCls=pct===100?'done':'';
-    clBlock=`<div class="cl-progress-wrap"><div class="cl-progress-info"><span class="cl-progress-label">${done}/${total} completados</span><span class="cl-progress-pct ${pctCls}">${pct}%</span></div><div class="cl-bar"><div class="cl-bar-fill ${barCls}" style="width:${pct}%"></div></div></div>`;
-    clBlock+=`<div class="cl-items">`;
-    p.checklist_items.forEach(it=>{const doneCls=it.completado?'done':'';clBlock+=`<div class="cl-item"><div class="cl-check ${doneCls}" onclick="toggleClItem('${p.id}','${it.id}')">${it.completado?'✓':''}</div><div class="cl-item-text ${doneCls}" onblur="saveClItemEdit('${p.id}','${it.id}',this)" onclick="editClItem(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveClItemEdit('${p.id}','${it.id}',this)}">${esc(it.texto)}</div><button class="cl-item-del" onclick="deleteClItem('${p.id}','${it.id}')">×</button></div>`;});
-    clBlock+=`</div><button class="btn-add-cl-item" onclick="addClItemToCard('${p.id}')">＋ Agregar item</button>`;
+    const barCls=pct===100?'done':'',pctCls=pct===100?'done':'';
+    // Progress row (always visible — toca para desplegar)
+    clBlock=`<div class="cl-progress-wrap" onclick="toggleClExpand('${p.id}');event.stopPropagation()">
+      <div class="cl-progress-info" style="margin-bottom:4px">
+        <span class="cl-progress-label">${done}/${total} completados</span>
+        <span class="cl-chevron">▶</span>
+        <span class="cl-toggle-lbl"></span>
+        <span class="cl-progress-pct ${pctCls}" style="margin-left:auto">${pct}%</span>
+      </div>
+      <div class="cl-bar"><div class="cl-bar-fill ${barCls}" style="width:${pct}%"></div></div>
+    </div>`;
+    // Items (hidden until expanded)
+    clBlock+=`<div class="cl-items-wrap"><div class="cl-items">`;
+    p.checklist_items.forEach(it=>{
+      const dc=it.completado?'done':'';
+      clBlock+=`<div class="cl-item"><div class="cl-check ${dc}" onclick="toggleClItem('${p.id}','${it.id}');event.stopPropagation()">${it.completado?'✓':''}</div><div class="cl-item-text ${dc}" onblur="saveClItemEdit('${p.id}','${it.id}',this)" onclick="editClItem(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveClItemEdit('${p.id}','${it.id}',this)}">${esc(it.texto)}</div><button class="cl-item-del" onclick="deleteClItem('${p.id}','${it.id}');event.stopPropagation()">×</button></div>`;
+    });
+    clBlock+=`</div><button class="btn-add-cl-item" onclick="addClItemToCard('${p.id}');event.stopPropagation()">＋ Agregar item</button></div>`;
   }
   const acc=[!res?`<button class="act-btn resolve" onclick="quickResolve('${p.id}')">✅ Resolver</button>`:'',`<button class="act-btn" onclick="openStatusMenu(event,'${p.id}')">🔄 Estado</button>`,`<button class="act-btn del" onclick="confirmDel('${p.id}')">🗑️</button>`].join('');
   const borderStyle=borderColor?`border-left:4px solid ${borderColor};`:'';
@@ -1293,7 +1462,7 @@ function renderImportTab(){
 function handleFileDrop(e){e.preventDefault();document.getElementById('imp-drop').classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)setImpFile(f);}
 function handleFileChange(e){const f=e.target.files[0];if(f)setImpFile(f);e.target.value='';}
 function setImpFile(f){impFile=f;document.getElementById('imp-file-sel').classList.add('on');document.getElementById('imp-file-name').textContent=f.name;document.getElementById('btn-imp-process').classList.add('on');}
-function clearImpFile(){impFile=null;document.getElementById('imp-file-sel').classList.remove('on');document.getElementById('btn-imp-process').classList.remove('on');document.getElementById('imp-review-area').innerHTML='';}
+function clearImpFile(){impFile=null;impReviewList=[];impSelected=new Set();impMergeMode=false;[impItemFormatos,impItemClItems,impItemTextos,impItemResps,impItemModulos,impItemOpen].forEach(o=>{Object.keys(o).forEach(k=>delete o[k]);});document.getElementById('imp-file-sel').classList.remove('on');document.getElementById('btn-imp-process').classList.remove('on');document.getElementById('imp-review-area').innerHTML='';}
 
 async function processFile(){
   if(!impFile)return;
@@ -1334,48 +1503,110 @@ async function extractDocxText(f){
 }
 
 // Import review state per item
-const impItemFormatos={};
-const impItemClItems={};
+const impItemFormatos={},impItemClItems={},impItemTextos={},impItemResps={},impItemModulos={},impItemOpen={};
 
 function renderImpReview(){
   if(!impReviewList.length){document.getElementById('imp-review-area').innerHTML=`<div class="empty"><div class="empty-icon">🤷</div><div class="empty-title">No se encontraron pendientes</div><div class="empty-sub">Intenta con otro archivo</div></div>`;return;}
-  // Init formatos
-  impReviewList.forEach((item,i)=>{if(!impItemFormatos[i])impItemFormatos[i]=item.tipo_propuesto||'normal';if(!impItemClItems[i])impItemClItems[i]=(item.checklist_items||[]).map(t=>({id:genId(),texto:t}));});
+  impReviewList.forEach((item,i)=>{
+    if(impItemFormatos[i]===undefined) impItemFormatos[i]=item.tipo_propuesto||'normal';
+    if(impItemClItems[i]===undefined)  impItemClItems[i]=(item.checklist_items||[]).map(t=>({id:genId(),texto:t}));
+    if(impItemTextos[i]===undefined)   impItemTextos[i]=item.texto;
+    if(impItemResps[i]===undefined)    impItemResps[i]=null;
+    if(impItemModulos[i]===undefined)  impItemModulos[i]=item.modulo_origen||'';
+    if(impItemOpen[i]===undefined)     impItemOpen[i]=false;
+  });
+  const isDirector=activeUser?.aut==='Director'||activeUser?.aut==='Lider';
+  const respOptions=isDirector?USUARIOS.filter(u=>u.id!==activeUser.id):USUARIOS.filter(u=>u.equipo===activeUser.equipo&&u.id!==activeUser.id);
+  const selCount=impSelected.size;
+  let h=`<div class="imp-review-header">✅ ${impReviewList.length} pendientes encontrados — edita antes de importar</div>`;
+  if(selCount>=2&&!impMergeMode){
+    h+=`<div class="imp-merge-bar"><span>🔗 <b>${selCount} seleccionados</b> — ¿van juntos?</span><button class="btn-imp-merge" onclick="startMerge()">Agrupar en 1 checklist</button></div>`;
+  }
+  if(impMergeMode){
+    h+=`<div class="imp-merge-input-row">
+      <div style="font-size:13px;font-weight:600;color:var(--sp-c)">🔗 Título del checklist combinado</div>
+      <input type="text" id="imp-merge-inp" value="${escImp(impMergeTitle)}" placeholder="Ej: Pendientes de Juan…" oninput="impMergeTitle=this.value">
+      <div class="imp-merge-actions">
+        <button class="btn-imp-merge-ok" onclick="confirmMerge()">Confirmar agrupación</button>
+        <button class="btn-imp-merge-cancel" onclick="impMergeMode=false;renderImpReview()">Cancelar</button>
+      </div>
+    </div>`;
+  }
   const grupos=[...new Set(impReviewList.map(p=>p.grupo))];
-  const mateOpts='<option value="">— Seleccionar —</option>'+(activeUser?USUARIOS.filter(u=>u.equipo===activeUser.equipo&&u.id!==activeUser.id).map(u=>`<option value="${u.id}">${u.nombre}</option>`).join(''):'');
-  let h=`<div class="imp-review-header">✅ Se encontraron ${impReviewList.length} pendientes — revisa antes de importar</div>`;
   grupos.forEach(g=>{
-    if(g)h+=`<div class="imp-grupo-label">${g}</div>`;
+    if(g) h+=`<div class="imp-grupo-label">${escImp(g)}</div>`;
     impReviewList.forEach((item,i)=>{
-      if(item.grupo!==g)return;
-      const sel=impSelected.has(i);const fmt=impItemFormatos[i]||'normal';
-      h+=`<div class="imp-review-card"><div class="imp-review-top"><div class="imp-review-chk ${sel?'on':''}" onclick="toggleImpSel(${i})">${sel?'✓':''}</div><div class="imp-review-text">${esc(item.texto)}</div><div class="imp-fmt-toggle"><button class="imp-fmt-btn ${fmt==='normal'?'on':''}" onclick="setImpFmt(${i},'normal')">Normal</button><button class="imp-fmt-btn ${fmt==='checklist'?'on':''}" onclick="setImpFmt(${i},'checklist')">✅ Checklist</button></div></div>`;
+      if(item.grupo!==g) return;
+      const sel=impSelected.has(i);
+      const fmt=impItemFormatos[i]||'normal';
+      const texto=impItemTextos[i]??item.texto;
+      const perResp=impItemResps[i];
+      const perMod=impItemModulos[i];
+      const isOpen=impItemOpen[i];
+      const respUser=perResp?USUARIOS.find(u=>u.id===perResp):null;
+      const modLabel=perMod?perMod.charAt(0).toUpperCase()+perMod.slice(1):'';
+      h+=`<div class="imp-review-card">
+        <div class="imp-review-top">
+          <div class="imp-review-chk ${sel?'on':''}" onclick="toggleImpSel(${i})">${sel?'✓':''}</div>
+          <div style="flex:1;min-width:0">
+            <input type="text" class="imp-text-edit" value="${escImp(texto)}" placeholder="Descripción…"
+              oninput="impItemTextos[${i}]=this.value" onchange="impItemTextos[${i}]=this.value">
+          </div>
+          <div class="imp-fmt-toggle">
+            <button class="imp-fmt-btn ${fmt==='normal'?'on':''}" onclick="setImpFmt(${i},'normal')">Normal</button>
+            <button class="imp-fmt-btn ${fmt==='checklist'?'on':''}" onclick="setImpFmt(${i},'checklist')">✅</button>
+          </div>
+        </div>`;
       if(fmt==='checklist'){
-        const clItems=impItemClItems[i]||[];
-        h+=`<div class="imp-cl-items">${clItems.map((it,ci)=>`<div class="imp-cl-item-row"><input type="text" value="${esc(it.texto)}" placeholder="Item ${ci+1}…" oninput="updateImpClItem(${i},'${it.id}',this.value)" onchange="updateImpClItem(${i},'${it.id}',this.value)"><button class="imp-cl-rm" onclick="removeImpClItem(${i},'${it.id}')">×</button></div>`).join('')}</div>`;
-        h+=`<button class="btn-imp-add-cl" onclick="addImpClItem(${i})">+ Agregar item</button>`;
+        const cl=impItemClItems[i]||[];
+        h+=`<div class="imp-cl-items">${cl.map((it,ci)=>`<div class="imp-cl-item-row"><input type="text" value="${escImp(it.texto)}" placeholder="Item ${ci+1}…" oninput="updateImpClItem(${i},'${it.id}',this.value)"><button class="imp-cl-rm" onclick="removeImpClItem(${i},'${it.id}')">×</button></div>`).join('')}</div><button class="btn-imp-add-cl" onclick="addImpClItem(${i})">+ Agregar item</button>`;
+      }
+      h+=`<div class="imp-item-meta">
+        ${perResp?`<span class="mtag resp">👤 ${respUser?.nombre.split(' ')[0]||'?'}</span>`:''}
+        ${perMod?`<span class="mtag mod">🔗 ${escImp(modLabel)}</span>`:''}
+        <button class="imp-expand-btn" onclick="toggleImpItemOpen(${i})">${isOpen?'▲ Menos':'⚙️ Opciones'}</button>
+      </div>`;
+      if(isOpen){
+        h+=`<div class="imp-item-detail">
+          <div class="imp-detail-row"><span class="imp-detail-lbl">👤 Responsable</span>
+            <div class="sel-w" style="flex:1"><select class="f-select" style="font-size:12px;padding:6px 28px 6px 10px" onchange="impItemResps[${i}]=this.value||null">
+              <option value="">Global (ver abajo)</option>
+              ${respOptions.map(u=>`<option value="${u.id}" ${perResp===u.id?'selected':''}>${escImp(u.nombre)} · ${u.area}</option>`).join('')}
+            </select></div>
+          </div>
+          <div class="imp-detail-row"><span class="imp-detail-lbl">🔗 Módulo</span>
+            <div class="sel-w" style="flex:1"><select class="f-select" style="font-size:12px;padding:6px 28px 6px 10px" onchange="impItemModulos[${i}]=this.value">
+              ${['','proyectos','ventas','operativo','cx','administrativo','otro'].map(v=>`<option value="${v}" ${perMod===v?'selected':''}>${v||'— Sin módulo —'}</option>`).join('')}
+            </select></div>
+          </div>
+        </div>`;
       }
       h+=`</div>`;
     });
   });
-  // Destination
+  const mateOpts='<option value="">— Sin responsable global —</option>'+respOptions.map(u=>`<option value="${u.id}">${escImp(u.nombre)} · ${u.area}</option>`).join('');
   h+=`<div class="imp-dest-card" style="margin-top:14px">
-    <span class="imp-dest-label">¿A dónde van los pendientes?</span>
+    <span class="imp-dest-label">Destino por defecto</span>
     <div class="imp-dest-opts">
-      <div class="imp-dest-opt ${impTipo==='recordatorio'?'on':''}" id="imp-opt-rec" onclick="setImpTipo('recordatorio')"><div class="imp-dest-icon">🔔</div><div><div class="imp-dest-name">Pendientes personales</div><div class="imp-dest-sub">Solo tú los ves. Ideal para seguimiento de reunión.</div></div><div class="imp-radio"></div></div>
-      <div class="imp-dest-opt ${impTipo==='asignado'?'on':''}" id="imp-opt-asig" onclick="setImpTipo('asignado')"><div class="imp-dest-icon">👤</div><div><div class="imp-dest-name">Asignar a alguien de mi equipo</div><div class="imp-dest-sub">El responsable los verá en su sección.</div></div><div class="imp-radio"></div></div>
+      <div class="imp-dest-opt ${impTipo==='recordatorio'?'on':''}" onclick="setImpTipo('recordatorio')"><div class="imp-dest-icon">🔔</div><div><div class="imp-dest-name">Personales</div><div class="imp-dest-sub">Solo tú los ves</div></div><div class="imp-radio"></div></div>
+      <div class="imp-dest-opt ${impTipo==='asignado'?'on':''}" onclick="setImpTipo('asignado')"><div class="imp-dest-icon">👤</div><div><div class="imp-dest-name">Asignar</div><div class="imp-dest-sub">El responsable los verá</div></div><div class="imp-radio"></div></div>
     </div>
-    <div id="imp-resp-row" style="display:${impTipo==='asignado'?'block':'none'}"><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px">Responsable</label><div class="sel-w"><select class="f-select" id="imp-resp">${mateOpts}</select></div></div>
+    <div style="display:${impTipo==='asignado'?'block':'none'}">
+      <label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px">Responsable global</label>
+      <div class="sel-w"><select class="f-select" id="imp-resp">${mateOpts}</select></div>
+    </div>
   </div>
   <div class="imp-footer-bar">
-    <div class="imp-footer-cnt"><b id="imp-cnt">${impSelected.size}</b> de ${impReviewList.length} seleccionados</div>
+    <div class="imp-footer-cnt"><b>${selCount}</b> de ${impReviewList.length} seleccionados</div>
     <button class="btn-imp-selall" onclick="impSelAll()">Sel. todos</button>
-    <button class="btn-imp-go" ${impSelected.size===0?'disabled':''} onclick="ejecutarImport()">Importar ${impSelected.size} →</button>
+    <button class="btn-imp-go" ${selCount===0?'disabled':''} onclick="ejecutarImport()">Importar ${selCount} →</button>
   </div>`;
   document.getElementById('imp-review-area').innerHTML=h;
 }
 
+function escImp(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function toggleImpSel(i){if(impSelected.has(i))impSelected.delete(i);else impSelected.add(i);renderImpReview();}
+function toggleImpItemOpen(i){impItemOpen[i]=!impItemOpen[i];renderImpReview();}
 function setImpFmt(i,fmt){impItemFormatos[i]=fmt;if(fmt==='checklist'&&(!impItemClItems[i]||!impItemClItems[i].length))impItemClItems[i]=[{id:genId(),texto:''}];renderImpReview();}
 function addImpClItem(i){if(!impItemClItems[i])impItemClItems[i]=[];impItemClItems[i].push({id:genId(),texto:''});renderImpReview();}
 function removeImpClItem(i,id){impItemClItems[i]=impItemClItems[i].filter(x=>x.id!==id);renderImpReview();}
@@ -1383,19 +1614,53 @@ function updateImpClItem(i,id,val){const it=impItemClItems[i]?.find(x=>x.id===id
 function setImpTipo(t){impTipo=t;renderImpReview();}
 function impSelAll(){if(impSelected.size===impReviewList.length)impSelected=new Set();else impSelected=new Set(impReviewList.map((_,i)=>i));renderImpReview();}
 
+function startMerge(){
+  const idxs=[...impSelected].sort((a,b)=>a-b);
+  impMergeTitle=impItemTextos[idxs[0]]||impReviewList[idxs[0]]?.texto||'';
+  impMergeMode=true; renderImpReview();
+  setTimeout(()=>{const el=document.getElementById('imp-merge-inp');if(el){el.focus();el.select();}},50);
+}
+
+function confirmMerge(){
+  const titulo=impMergeTitle.trim();
+  if(!titulo){showToast('⚠️ Escribe un título');return;}
+  const idxs=[...impSelected].sort((a,b)=>a-b);
+  if(idxs.length<2) return;
+  const clItems=idxs.map(i=>({id:genId(),texto:impItemTextos[i]??impReviewList[i].texto}));
+  const merged={grupo:impReviewList[idxs[0]].grupo,texto:titulo,tipo_propuesto:'checklist',checklist_items:clItems.map(x=>x.texto),modulo_origen:impItemModulos[idxs[0]]||impReviewList[idxs[0]].modulo_origen||null,responsable_mencionado:null};
+  const removeSet=new Set(idxs);
+  const newList=[],nFmt={},nCl={},nTxt={},nResp={},nMod={},nOpen={};
+  let ni=0,inserted=false;
+  impReviewList.forEach((item,i)=>{
+    if(removeSet.has(i)){if(!inserted){const mi=ni;newList.push(merged);nFmt[mi]='checklist';nCl[mi]=clItems;nTxt[mi]=titulo;nResp[mi]=impItemResps[idxs[0]];nMod[mi]=merged.modulo_origen||'';nOpen[mi]=false;ni++;inserted=true;}}
+    else{newList.push(item);nFmt[ni]=impItemFormatos[i];nCl[ni]=impItemClItems[i];nTxt[ni]=impItemTextos[i];nResp[ni]=impItemResps[i];nMod[ni]=impItemModulos[i];nOpen[ni]=impItemOpen[i];ni++;}
+  });
+  impReviewList.splice(0,impReviewList.length,...newList);
+  [impItemFormatos,impItemClItems,impItemTextos,impItemResps,impItemModulos,impItemOpen].forEach(o=>{Object.keys(o).forEach(k=>delete o[k]);});
+  Object.assign(impItemFormatos,nFmt);Object.assign(impItemClItems,nCl);Object.assign(impItemTextos,nTxt);
+  Object.assign(impItemResps,nResp);Object.assign(impItemModulos,nMod);Object.assign(impItemOpen,nOpen);
+  impSelected=new Set([0]);impMergeMode=false;impMergeTitle='';
+  renderImpReview();showToast(`✅ ${idxs.length} pendientes agrupados en 1 checklist`);
+}
+
 function ejecutarImport(){
-  if(!activeUser||!impSelected.size)return;
-  const respId=impTipo==='asignado'?(document.getElementById('imp-resp')?.value||activeUser.id):activeUser.id;
+  if(!activeUser||!impSelected.size) return;
+  const globalRespId=impTipo==='asignado'?(document.getElementById('imp-resp')?.value||null):null;
   const nuevos=[...impSelected].map(i=>{
     const item=impReviewList[i];const fmt=impItemFormatos[i]||'normal';
+    const texto=(impItemTextos[i]??item.texto)||'(sin título)';
     const clItems=fmt==='checklist'?(impItemClItems[i]||[]).filter(x=>x.texto.trim()).map(x=>({id:x.id,texto:x.texto.trim(),completado:false})):[];
-    return{id:genId(),texto:item.texto,texto_original:null,creado_por:activeUser.id,responsable:respId,tipo:impTipo,formato:fmt,checklist_items:clItems,seguimiento_id:null,lista_id:null,modulo_origen:item.modulo_origen||null,registro_id:item.registro_id||null,fecha_limite:null,estatus:'pendiente',fecha_creacion:new Date().toISOString(),chat:[]};
+    const perResp=impItemResps[i];
+    const respId=perResp||(impTipo==='asignado'?globalRespId:null)||activeUser.id;
+    const tipo=perResp?'asignado':impTipo;
+    const modulo=impItemModulos[i]||item.modulo_origen||null;
+    return{id:genId(),texto,texto_original:null,creado_por:activeUser.id,responsable:respId,tipo,formato:fmt,checklist_items:clItems,seguimiento_id:null,lista_id:null,modulo_origen:modulo,registro_id:item.registro_id||null,fecha_limite:null,estatus:'pendiente',fecha_creacion:new Date().toISOString(),chat:[]};
   });
   pendientes=[...nuevos,...pendientes];savePendientes();
-  const destino=impTipo==='recordatorio'?'tus recordatorios':`asignados a ${USUARIOS.find(u=>u.id===respId)?.nombre.split(' ')[0]||'tu equipo'}`;
-  showToast(`✅ ${nuevos.length} pendientes importados a ${destino}`);
+  showToast(`✅ ${nuevos.length} pendientes importados`);
   setTab('recordatorios');
 }
+
 
 /* ══ ACCIONES ══ */
 function quickResolve(id){cambiarEstatus(id,'resuelto');showToast('✅ Resuelto');}
@@ -1408,70 +1673,8 @@ function executeDel(){if(!delTargetId)return;pendientes=pendientes.filter(p=>p.i
 function scrollToCapture(){openCapturePanel(null);}
 
 /* ══ HELPERS ══ */
-function queueDb(task){
-  dbQueue=dbQueue.then(task).catch(err=>{
-    console.error('Error Supabase:',err);
-    showToast(`Error al guardar: ${err.message}`,5000);
-  });
-  return dbQueue;
-}
-function assertSb(result){if(result.error)throw result.error;return result.data;}
-
-async function loadSupabaseData(){
-  const [uRes,lRes,pRes]=await Promise.all([
-    supabaseClient.from('usuarios').select('*').eq('activo',true).order('equipo').order('nombre'),
-    supabaseClient.from('listas_pendientes').select('*').order('fecha_creacion'),
-    supabaseClient.from('pendientes').select('*,pendiente_checklist_items(*),pendiente_chat(*)').order('fecha_creacion',{ascending:false})
-  ]);
-  const users=assertSb(uRes)||[], dbListas=assertSb(lRes)||[], dbPendientes=assertSb(pRes)||[];
-  USUARIOS=users.map(u=>({id:u.id,nombre:u.nombre,rol:u.rol,area:u.area,equipo:u.equipo,ini:u.iniciales,color:u.color||'#6b7280',aut:u.autorizacion}));
-  listas=dbListas.map(l=>({id:l.id,titulo:l.titulo,creado_por:l.creado_por,fecha_creacion:l.fecha_creacion,open:l.abierta!==false}));
-  pendientes=dbPendientes.map(p=>({
-    id:p.id,texto:p.texto,texto_original:p.texto_original,creado_por:p.creado_por,responsable:p.responsable,
-    tipo:p.tipo,formato:p.formato||'normal',seguimiento_id:p.seguimiento_id,lista_id:p.lista_id,
-    modulo_origen:p.modulo_origen,registro_id:p.registro_id,fecha_limite:p.fecha_limite,
-    estatus:p.estatus,fecha_creacion:p.fecha_creacion,
-    checklist_items:(p.pendiente_checklist_items||[]).sort((a,b)=>(a.orden||0)-(b.orden||0)).map(i=>({id:i.id,texto:i.texto,completado:i.completado})),
-    chat:(p.pendiente_chat||[]).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha)).map(m=>({id:m.id,autor_id:m.autor_id,tipo:m.tipo,contenido:m.contenido,nombre_archivo:m.nombre_archivo,mime_type:m.mime_type,tamaño:m.tamano_bytes,fecha:m.fecha}))
-  }));
-  remotePendingIds=new Set(pendientes.map(p=>p.id));
-  remoteListaIds=new Set(listas.map(l=>l.id));
-}
-
-function savePendientes(){return queueDb(syncPendientesToSupabase);}
-async function syncPendientesToSupabase(){
-  const rows=pendientes.map(p=>({
-    id:p.id,texto:p.texto,texto_original:p.texto_original||null,creado_por:p.creado_por,responsable:p.responsable||null,
-    tipo:p.tipo,formato:p.formato||'normal',seguimiento_id:p.seguimiento_id||null,lista_id:p.lista_id||null,
-    modulo_origen:p.modulo_origen||null,registro_id:p.registro_id||null,fecha_limite:p.fecha_limite||null,
-    estatus:p.estatus||'pendiente',fecha_creacion:p.fecha_creacion||new Date().toISOString(),updated_at:new Date().toISOString()
-  }));
-  if(rows.length)assertSb(await supabaseClient.from('pendientes').upsert(rows,{onConflict:'id'}));
-  const currentIds=new Set(rows.map(r=>r.id));
-  const deleted=[...remotePendingIds].filter(id=>!currentIds.has(id));
-  if(deleted.length)assertSb(await supabaseClient.from('pendientes').delete().in('id',deleted));
-
-  for(const p of pendientes){
-    assertSb(await supabaseClient.from('pendiente_checklist_items').delete().eq('pendiente_id',p.id));
-    const items=(p.checklist_items||[]).map((i,orden)=>({id:i.id,pendiente_id:p.id,texto:i.texto,completado:!!i.completado,orden}));
-    if(items.length)assertSb(await supabaseClient.from('pendiente_checklist_items').insert(items));
-
-    assertSb(await supabaseClient.from('pendiente_chat').delete().eq('pendiente_id',p.id));
-    const msgs=(p.chat||[]).map(m=>({id:m.id,pendiente_id:p.id,autor_id:m.autor_id,tipo:m.tipo,contenido:m.contenido,nombre_archivo:m.nombre_archivo||null,mime_type:m.mime_type||null,tamano_bytes:m.tamaño||m.tamano_bytes||null,fecha:m.fecha||new Date().toISOString()}));
-    if(msgs.length)assertSb(await supabaseClient.from('pendiente_chat').insert(msgs));
-  }
-  remotePendingIds=currentIds;
-}
-
-function saveListas(){return queueDb(syncListasToSupabase);}
-async function syncListasToSupabase(){
-  const rows=listas.map(l=>({id:l.id,titulo:l.titulo,creado_por:l.creado_por,abierta:l.open!==false,fecha_creacion:l.fecha_creacion||new Date().toISOString()}));
-  if(rows.length)assertSb(await supabaseClient.from('listas_pendientes').upsert(rows,{onConflict:'id'}));
-  const currentIds=new Set(rows.map(r=>r.id));
-  const deleted=[...remoteListaIds].filter(id=>!currentIds.has(id));
-  if(deleted.length)assertSb(await supabaseClient.from('listas_pendientes').delete().in('id',deleted));
-  remoteListaIds=currentIds;
-}
+function savePendientes(){localStorage.setItem(SK,JSON.stringify(pendientes));}
+function saveListas(){localStorage.setItem(LK,JSON.stringify(listas));}
 function genId(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).substr(2);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function showHide(id,show){const el=document.getElementById(id);if(!el)return;if(show){el.classList.remove('hidden');el.style.maxHeight='300px';el.style.opacity='1';}else el.classList.add('hidden');}
@@ -1482,43 +1685,20 @@ document.addEventListener('click',e=>{
 });
 
 /* ══ RESP SETTINGS (colores y grupos) ══ */
+const RC_KEY='gmantto_resp_cfg';
 let respCfg={colors:{},groups:[]};
 let cpTarget=null; // {type:'resp'|'group', id}
 const CP_PALETTE=['#ef4444','#f97316','#f59e0b','#84cc16','#10b981','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#6b7280','#111827','#7c3aed'];
 
-async function loadRespCfg(){
-  respCfg={colors:{},groups:[]};
-  if(!activeUser)return;
-  try{
-    const [cRes,gRes,mRes]=await Promise.all([
-      supabaseClient.from('responsable_colores').select('*').eq('propietario_id',activeUser.id),
-      supabaseClient.from('responsable_grupos').select('*').eq('propietario_id',activeUser.id).order('created_at'),
-      supabaseClient.from('responsable_grupo_miembros').select('*')
-    ]);
-    const colors=assertSb(cRes)||[],groups=assertSb(gRes)||[],members=assertSb(mRes)||[];
-    colors.forEach(c=>respCfg.colors[c.responsable_id]=c.color);
-    respCfg.groups=groups.map(g=>({id:g.id,nombre:g.nombre,color:g.color,miembros:members.filter(m=>m.grupo_id===g.id).map(m=>m.usuario_id)}));
-    renderAll();
-  }catch(err){console.error('No se pudo cargar configuración:',err);showToast(`Error configuración: ${err.message}`,5000);}
+function loadRespCfg(){
+  const all=JSON.parse(localStorage.getItem(RC_KEY)||'{}');
+  respCfg=all[activeUser?.id]||{colors:{},groups:[]};
+  if(!respCfg.colors)respCfg.colors={};
+  if(!respCfg.groups)respCfg.groups=[];
 }
-function saveRespCfg(){return queueDb(syncRespCfgToSupabase);}
-async function syncRespCfgToSupabase(){
-  if(!activeUser)return;
-  assertSb(await supabaseClient.from('responsable_colores').delete().eq('propietario_id',activeUser.id));
-  const colors=Object.entries(respCfg.colors||{}).map(([responsable_id,color])=>({propietario_id:activeUser.id,responsable_id,color}));
-  if(colors.length)assertSb(await supabaseClient.from('responsable_colores').insert(colors));
-
-  const old=assertSb(await supabaseClient.from('responsable_grupos').select('id').eq('propietario_id',activeUser.id))||[];
-  const currentIds=new Set((respCfg.groups||[]).map(g=>g.id));
-  const removed=old.map(g=>g.id).filter(id=>!currentIds.has(id));
-  if(removed.length)assertSb(await supabaseClient.from('responsable_grupos').delete().in('id',removed));
-  const groups=(respCfg.groups||[]).map(g=>({id:g.id,propietario_id:activeUser.id,nombre:g.nombre,color:g.color||'#6b7280'}));
-  if(groups.length)assertSb(await supabaseClient.from('responsable_grupos').upsert(groups,{onConflict:'id'}));
-  for(const g of respCfg.groups||[]){
-    assertSb(await supabaseClient.from('responsable_grupo_miembros').delete().eq('grupo_id',g.id));
-    const members=(g.miembros||[]).map(usuario_id=>({grupo_id:g.id,usuario_id}));
-    if(members.length)assertSb(await supabaseClient.from('responsable_grupo_miembros').insert(members));
-  }
+function saveRespCfg(){
+  const all=JSON.parse(localStorage.getItem(RC_KEY)||'{}');
+  all[activeUser.id]=respCfg;localStorage.setItem(RC_KEY,JSON.stringify(all));
 }
 
 /* COLOR PICKER */
@@ -1990,6 +2170,281 @@ function pdfCard(p, showDate=false){
     </div>
     <div style="font-size:9pt;color:#888;margin-top:3pt">${details}</div>${cl}
   </div>`;
+}
+
+/* ══ FAB FUNCTIONS ══ */
+function openManualCapture(){
+  openCapturePanel(null);
+  setTimeout(()=>setCaptureMode('manual'),50);
+}
+
+function setVoiceBubbleState(state){
+  const bubble=document.getElementById('voice-bubble');
+  const icon=document.getElementById('vb-icon');
+  const dots=document.getElementById('vb-dots');
+  const label=document.getElementById('vb-label');
+  if(!bubble)return;
+  bubble.className='voice-bubble '+state;
+  if(state==='idle'){icon.textContent='🎙️';icon.style.display='';dots.style.display='none';label.textContent='Dictar';}
+  else if(state==='recording'){icon.textContent='🔴';icon.style.display='';dots.style.display='flex';label.textContent='Detener';}
+  else if(state==='analyzing'){icon.textContent='';icon.style.display='none';dots.style.display='flex';label.textContent='Analizando…';}
+}
+
+function handleVoiceBubble(){
+  const bubble=document.getElementById('voice-bubble');
+  const isRecording=bubble.classList.contains('recording');
+  if(isRecording){analyzeVoice();}
+  else{openVoiceFab();}
+}
+
+/* ══ VOICE CAPTURE ══ */
+let voiceRecog=null,voiceText='',voiceAnalyzing=false;
+let voiceDetectedPersonas=[]; // [{id,nombre,rol}]
+let voicePersonaRoles={}; // key→'asignar'|'seguimiento'|'ignorar'
+
+function openVoiceFab(){
+  if(!activeUser){showToast('Selecciona tu usuario primero');return;}
+  if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window)){
+    showToast('Tu navegador no soporta dictado — usa el modo IA en el formulario');return;
+  }
+  voiceText=''; voicePersonaRoles={}; voiceDetectedPersonas=[];
+  document.getElementById('voice-panel').classList.add('open');
+  document.getElementById('voice-overlay').classList.add('on');
+  setVoiceBubbleState('recording');
+  renderVoiceBody('recording');
+  startVoiceRec();
+}
+
+function startVoiceRec(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  voiceRecog=new SR(); voiceRecog.lang='es-MX'; voiceRecog.interimResults=true; voiceRecog.continuous=true;
+  let base='';
+  voiceRecog.onresult=(e)=>{
+    let interim='',final=base;
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';
+      else interim=e.results[i][0].transcript;
+    }
+    voiceText=final+interim; base=final;
+    const el=document.getElementById('voice-live');
+    if(el){el.textContent=voiceText;el.classList.toggle('empty',!voiceText.trim());}
+  };
+  voiceRecog.onerror=()=>{};
+  voiceRecog.onend=()=>{};
+  voiceRecog.start();
+}
+
+function stopVoiceRec(){
+  if(voiceRecog){try{voiceRecog.stop();}catch(e){}voiceRecog=null;}
+}
+
+function renderVoiceBody(state,errorMsg){
+  const body=document.getElementById('voice-panel-body');
+  if(state==='recording'){
+    body.innerHTML=`
+      <div class="voice-state-icon">🎙️</div>
+      <div class="voice-state-title">Dictando…</div>
+      <div class="voice-state-sub">Habla con claridad. Menciona la tarea, las personas y el área.</div>
+      <div class="voice-dots"><div class="voice-dot"></div><div class="voice-dot"></div><div class="voice-dot"></div></div>
+      <div class="voice-transcript recording" id="voice-live" ${!voiceText.trim()?'style="color:var(--tm);font-style:italic"':''}>
+        ${voiceText.trim()||'Escuchando…'}
+      </div>
+      <button class="btn-voice-stop" onclick="analyzeVoice()">■ Listo — Analizar pendiente</button>
+      <button class="btn-voice-cancel" onclick="closeVoicePanel()">Cancelar</button>`;
+  } else if(state==='analyzing'){
+    body.innerHTML=`
+      <div class="voice-state-icon">🔄</div>
+      <div class="voice-state-title">Analizando…</div>
+      <div class="voice-state-sub">Extrayendo pendiente, personas y módulo</div>
+      <div class="voice-transcript" style="color:var(--t2)">"${esc(voiceText)}"</div>
+      <div class="loading-state on" style="justify-content:center"><div class="spinner"></div>Procesando con IA…</div>`;
+  } else if(state==='error'){
+    body.innerHTML=`
+      <div class="voice-state-icon">⚠️</div>
+      <div class="voice-state-title">Error al analizar</div>
+      <div class="voice-state-sub" style="color:var(--danger)">${esc(errorMsg||'Error desconocido')}</div>
+      <div class="voice-transcript">"${esc(voiceText)}"</div>
+      <button class="btn-voice-retry" onclick="analyzeVoice()">Reintentar análisis</button>
+      <button class="btn-voice-cancel" onclick="closeVoicePanel()">Cancelar</button>`;
+  }
+}
+
+async function analyzeVoice(){
+  stopVoiceRec();
+  if(!voiceText.trim()){showToast('⚠️ No se detectó texto. Intenta de nuevo.');return;}
+  if(!apiKey){
+    showToast('Configura tu API Key primero');
+    closeVoicePanel();
+    document.getElementById('api-banner').classList.add('on');
+    return;
+  }
+  setVoiceBubbleState('analyzing');
+  renderVoiceBody('analyzing');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:buildVoicePrompt(),messages:[{role:'user',content:voiceText}]})
+    });
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e?.error?.message||`Error ${res.status}`);}
+    const data=await res.json();
+    const raw=data.content?.map(c=>c.text||'').join('')||'';
+    const json=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    closeVoicePanel();
+    setVoiceBubbleState('idle');
+    mostrarVoicePreview(json);
+  }catch(err){
+    renderVoiceBody('error',err.message);
+  }
+}
+
+function closeVoicePanel(){
+  stopVoiceRec();
+  document.getElementById('voice-panel').classList.remove('open');
+  document.getElementById('voice-overlay').classList.remove('on');
+  setVoiceBubbleState('idle');
+}
+
+function buildVoicePrompt(){
+  const hoy=new Date();
+  const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const fd=`${DIAS[hoy.getDay()]} ${hoy.getDate()} de ${MES[hoy.getMonth()]} de ${hoy.getFullYear()}`;
+  const todos=USUARIOS.filter(u=>u.id!==activeUser.id).map(u=>`id:"${u.id}" nombre:"${u.nombre}" area:"${u.area}"`).join(' | ');
+  return `Extractor de pendientes por voz. Usuario activo: ${activeUser.nombre} (${activeUser.area}). Hoy: ${fd}.
+Usuarios del sistema: ${todos}.
+Módulos: proyectos, ventas, operativo, cx, administrativo, otro.
+
+Analiza el texto dictado. Devuelve SOLO JSON válido sin backticks:
+{
+  "tarea": "descripción clara en infinitivo, sin mencionar personas ni fechas",
+  "tipo": "recordatorio|asignado",
+  "personas": [
+    {"id": "id_del_usuario_o_null", "nombre": "nombre como fue mencionado", "rol": "asignar|seguimiento"}
+  ],
+  "modulo_origen": "proyectos|ventas|operativo|cx|administrativo|otro|null",
+  "registro_id": "P12345 u otro ID si se menciona explícitamente, o null",
+  "fecha_limite": "YYYY-MM-DD calculada desde hoy, o null",
+  "formato": "normal|checklist",
+  "checklist_items": ["item"] si formato=checklist, sino null,
+  "confianza": "alta|media|baja"
+}
+Reglas clave:
+- personas: lista TODAS las personas mencionadas. "asignar" = tiene una tarea/acción. "seguimiento" = contexto/referencia/reunión con alguien
+- Solo puede haber 1 persona con rol "asignar" (el responsable principal). Si se mencionan varias con acción, pon la más relevante como "asignar" y las demás "seguimiento"
+- Si hay acción para otra persona → tipo "asignado". Si es recordatorio propio → "recordatorio"
+- Trata de mapear nombres a IDs del sistema. Si no coincide exactamente, pon el nombre tal cual y id null
+- formato "checklist" solo si se enumeran claramente sub-tareas (1, 2, 3... o "primero... segundo... tercero...")
+- registro_id: si menciona P seguido de números o un folio específico`;
+}
+
+function mostrarVoicePreview(json){
+  voiceDetectedPersonas=json.personas||[];
+  voicePersonaRoles={};
+  voiceDetectedPersonas.forEach(p=>{voicePersonaRoles[p.id||p.nombre]=p.rol||'seguimiento';});
+
+  // Fill preview fields
+  document.getElementById('pv-tarea').value=json.tarea||'';
+  document.getElementById('pv-modulo').value=json.modulo_origen||'';
+  document.getElementById('pv-registro').value=json.registro_id||'';
+  document.getElementById('pv-fecha').value=json.fecha_limite||'';
+
+  // Tipo and responsable
+  const mainAsig=voiceDetectedPersonas.find(p=>voicePersonaRoles[p.id||p.nombre]==='asignar');
+  setPvTipo(mainAsig?'asignado':'recordatorio');
+  if(mainAsig?.id) document.getElementById('pv-resp').value=mainAsig.id;
+  else document.getElementById('pv-resp').value='';
+
+  // Seguimiento
+  const mainSeg=voiceDetectedPersonas.find(p=>voicePersonaRoles[p.id||p.nombre]==='seguimiento');
+  if(mainSeg?.id) document.getElementById('pv-seg').value=mainSeg.id;
+  else document.getElementById('pv-seg').value='';
+
+  // Checklist
+  pvClItems=(json.checklist_items||[]).map(t=>({id:genId(),texto:t}));
+  setPvFormato(json.formato==='checklist'?'checklist':'normal');
+  if(pvClItems.length) renderPvClItems();
+  showHide('pv-sec-reg',!!json.modulo_origen);
+
+  // Confidence badge
+  const badge=document.getElementById('conf-badge');
+  badge.textContent={alta:'🟢 Alta',media:'🟡 Revisar',baja:'🔴 Verificar'}[json.confianza]||'—';
+  badge.className=`conf-badge ${json.confianza||''}`;
+
+  // Open capture panel with only preview visible
+  document.getElementById('ia-section').style.display='none';
+  document.getElementById('manual-section').style.display='none';
+  document.getElementById('loading-state').classList.remove('on');
+  document.getElementById('preview-card').classList.add('on');
+  document.getElementById('cap-ttl').textContent='🎙️ Revisa y confirma';
+  document.getElementById('cap-panel').classList.add('open');
+  document.getElementById('cap-overlay').classList.add('on');
+
+  // Inject personas section into preview
+  renderVoicePersonasSection();
+}
+
+function renderVoicePersonasSection(){
+  const existing=document.getElementById('vps');if(existing)existing.remove();
+  if(!voiceDetectedPersonas.length) return;
+  const previewBody=document.querySelector('.preview-body');if(!previewBody) return;
+  const sec=document.createElement('div');
+  sec.id='vps';sec.className='voice-personas-section';
+  const ROL_LABELS={asignar:'→ Asignar',seguimiento:'👁 Seguimiento',ignorar:'✕ Ignorar'};
+  const ROL_CLS={asignar:'asignar',seguimiento:'seguimiento',ignorar:'ignorar'};
+  let h=`<span class="voice-personas-title">👥 Personas detectadas — toca para cambiar rol</span><div class="persona-chips">`;
+  voiceDetectedPersonas.forEach(p=>{
+    const key=p.id||p.nombre;
+    const rol=voicePersonaRoles[key]||'seguimiento';
+    const u=p.id?USUARIOS.find(x=>x.id===p.id):null;
+    const name=u?u.nombre.split(' ')[0]:p.nombre;
+    h+=`<div class="persona-chip ${ROL_CLS[rol]}" onclick="cyclePersonaRol('${key}','${p.id||''}')">
+      <span class="persona-chip-name">${esc(name)}</span>
+      <span class="persona-chip-rol">${ROL_LABELS[rol]}</span>
+    </div>`;
+  });
+  h+=`</div><div class="persona-chip-hint">Solo puede haber 1 responsable (→ Asignar). Las demás son referencias.</div>`;
+  sec.innerHTML=h;
+  previewBody.insertBefore(sec,previewBody.firstChild);
+}
+
+function cyclePersonaRol(key,id){
+  const roles=['asignar','seguimiento','ignorar'];
+  const current=voicePersonaRoles[key]||'seguimiento';
+  const next=roles[(roles.indexOf(current)+1)%roles.length];
+
+  // If changing TO asignar, unset any other asignar first
+  if(next==='asignar'){
+    Object.keys(voicePersonaRoles).forEach(k=>{if(k!==key&&voicePersonaRoles[k]==='asignar')voicePersonaRoles[k]='seguimiento';});
+  }
+  voicePersonaRoles[key]=next;
+
+  // Sync pv-resp (responsable = asignar)
+  const asigKey=Object.entries(voicePersonaRoles).find(([,r])=>r==='asignar')?.[0];
+  if(asigKey){
+    const asigP=voiceDetectedPersonas.find(p=>(p.id||p.nombre)===asigKey);
+    setPvTipo('asignado');
+    document.getElementById('pv-resp').value=asigP?.id||'';
+  }else{
+    setPvTipo('recordatorio');
+    document.getElementById('pv-resp').value='';
+  }
+
+  // Sync pv-seg (seguimiento = first seguimiento person with id)
+  const segP=voiceDetectedPersonas.find(p=>voicePersonaRoles[p.id||p.nombre]==='seguimiento'&&p.id);
+  document.getElementById('pv-seg').value=segP?.id||'';
+
+  renderVoicePersonasSection();
+}
+
+// Voice-aware volverCaptura
+function volverCaptura(){
+  const vps=document.getElementById('vps');if(vps)vps.remove();
+  document.getElementById('preview-card').classList.remove('on');
+  document.getElementById('btn-procesar').disabled=false;
+  document.getElementById('ia-section').style.display='block';
+  document.getElementById('manual-section').style.display='none';
+  document.getElementById('cap-ttl').textContent='Nuevo pendiente';
 }
 
 init();
