@@ -566,7 +566,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 
   <div class="api-banner" id="api-banner">
     <b>⚙️ Configura tu API Key de Anthropic</b>
-    Para usar modo IA e Importar. Solo se guarda en este dispositivo.
+    La clave se configura directamente en el archivo para esta prueba controlada.
     <div class="api-row">
       <input type="password" class="api-input" id="api-key-inp" placeholder="sk-ant-…">
       <button class="api-btn" onclick="saveApiKey()">Guardar</button>
@@ -773,9 +773,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 let USUARIOS=[];
 
 /* ══ STATE ══ */
-const UK='gmantto_pend_user',AK='gmantto_api_key';
+const UK='gmantto_pend_user';
 const SUPABASE_URL='https://qulldafyewynmwdxkjsf.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_B5tpfugNTnOsHymgxWCrWw_H8Yv9V1e';
+// REEMPLAZA SOLO EL TEXTO ENTRE COMILLAS ANTES DE PUBLICAR EN GITHUB PAGES.
+const ANTHROPIC_API_KEY='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';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 let dbQueue=Promise.resolve();
 let remotePendingIds=new Set(),remoteListaIds=new Set();
@@ -791,7 +793,7 @@ let impFile=null,impReviewList=[],impSelected=new Set(),impTipo='recordatorio';
 /* ══ INIT ══ */
 async function init(){
   const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();
-  apiKey=localStorage.getItem(AK)||'';
+  apiKey=ANTHROPIC_API_KEY;
   try{
     await loadSupabaseData();
     const uid=localStorage.getItem(UK);
@@ -854,10 +856,7 @@ function populateListaSelect(){
 
 /* ══ API KEY ══ */
 function saveApiKey(){
-  const v=document.getElementById('api-key-inp').value.trim();
-  if(!v.startsWith('sk-ant-')){showToast('⚠️ Clave inválida');return;}
-  apiKey=v;localStorage.setItem(AK,v);document.getElementById('api-banner').classList.remove('on');
-  document.getElementById('api-key-inp').value='';showToast('✅ API Key guardada');
+  showToast('La API Key se configura directamente en el archivo index.html');
 }
 
 /* ══ TABS ══ */
@@ -959,7 +958,7 @@ async function procesarIA(){
   if(!apiKey){document.getElementById('ia-error').textContent='Configura tu API Key primero.';document.getElementById('ia-error').classList.add('on');return;}
   stopMic();document.getElementById('ia-error').classList.remove('on');document.getElementById('loading-state').classList.add('on');document.getElementById('btn-procesar').disabled=true;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:700,system:buildSystemPrompt(),messages:[{role:'user',content:texto}]})});
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:700,system:buildSystemPrompt(),messages:[{role:'user',content:texto}]})});
     if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e?.error?.message||`Error ${res.status}`);}
     const data=await res.json();const raw=data.content?.map(c=>c.text||'').join('')||'';
     const json=JSON.parse(raw.replace(/```json|```/g,'').trim());
@@ -1313,7 +1312,7 @@ async function processFile(){
       const text=await extractDocxText(impFile);
       msgs=[{role:'user',content:`${buildImpPrompt()}\n\nCONTENIDO DEL DOCUMENTO:\n${text}`}];
     }else{showToast('Formato no soportado');document.getElementById('imp-loading').classList.remove('on');document.getElementById('btn-imp-process').classList.add('on');return;}
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2000,messages:msgs})});
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2000,messages:msgs})});
     if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e?.error?.message||`Error ${res.status}`);}
     const data=await res.json();const raw=data.content?.map(c=>c.text||'').join('')||'';
     const json=JSON.parse(raw.replace(/```json|```/g,'').trim());
