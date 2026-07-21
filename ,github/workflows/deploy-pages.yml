@@ -1,0 +1,80 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar archivos de publicacion
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          mkdir -p public
+          cp -R . public/
+          rm -rf public/.git
+          rm -rf public/.github
+
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          path = Path("public/index.html")
+
+          if not path.exists():
+              raise SystemExit("No se encontro public/index.html")
+
+          secret = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+
+          if not secret:
+              raise SystemExit("El secret ANTHROPIC_API_KEY esta vacio o no existe")
+
+          content = path.read_text(encoding="utf-8")
+
+          marker = "__ANTHROPIC_API_KEY__"
+
+          if marker not in content:
+              raise SystemExit(
+                  "No se encontro el marcador __ANTHROPIC_API_KEY__ en index.html"
+              )
+
+          content = content.replace(marker, secret)
+
+          path.write_text(content, encoding="utf-8")
+
+          print("API Key inyectada correctamente en el archivo de publicacion")
+          PY
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir archivos de GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Publicar GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
