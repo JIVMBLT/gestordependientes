@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Pendientes — Gestor Mantto</title>
+<!-- ═══════════════════════════════════════════════════
+     GESTOR MANTTO — module_pendientes.html
+     Fuente de datos: Supabase (esquema v1)
+     Tablas:
+       usuarios              → catálogo de usuarios
+       pendientes            → pendientes principales
+       pendiente_checklist_items → bullets de checklists
+       listas_pendientes     → listas/carpetas
+       responsable_colores   → colores personalizados
+       responsable_grupos    → grupos de responsables
+       responsable_grupo_miembros → miembros de grupos
+     Chat: solo localStorage (sin tabla en BD aún)
+     ═══════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
 :root{
@@ -558,6 +572,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .persona-chip-rol{font-size:10px;font-weight:500}
 .persona-chip-hint{font-size:11px;color:var(--tm);margin-top:6px}
 
+/* ── SUPABASE CONFIG BANNER ── */
+.sb-banner{display:none;background:#e8f0fe;border:1px solid #4285f4;border-radius:var(--r);padding:13px 14px;margin-bottom:12px;font-size:13px;color:#1a3a6b}
+.sb-banner.on{display:block}
+.sb-banner b{display:block;margin-bottom:4px}
+.sb-row{display:flex;flex-direction:column;gap:7px;margin-top:9px}
+.sb-input{padding:8px 10px;border:1.5px solid #4285f4;border-radius:var(--rsm);font-size:13px;font-family:inherit;background:#fff;color:var(--t1);width:100%}
+.sb-input:focus{outline:none;border-color:#1a3a6b}
+.sb-btn{padding:9px 16px;background:#4285f4;color:#fff;border:none;border-radius:var(--rsm);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.sb-btn:hover{background:#1a73e8}
+.sb-status{font-size:12px;margin-top:6px;font-weight:600}
+.sb-status.ok{color:#137333}
+.sb-status.err{color:var(--danger)}
+/* ── MIGRATION BANNER ── */
+.mig-banner{display:none;background:#fff4de;border:1px solid #ff9500;border-radius:var(--r);padding:13px 14px;margin-bottom:12px;font-size:13px;color:#7a4500}
+.mig-banner.on{display:block}
+.mig-banner b{display:block;margin-bottom:4px}
+.mig-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.mig-btn-primary{padding:8px 14px;background:#ff9500;color:#fff;border:none;border-radius:var(--rsm);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.mig-btn-primary:disabled{opacity:.5;cursor:wait}
+.mig-btn-secondary{padding:8px 14px;background:none;border:1px solid #ff9500;color:#7a4500;border-radius:var(--rsm);font-size:13px;cursor:pointer}
+.mig-btn-link{padding:8px 4px;background:none;border:none;color:#92400e;font-size:13px;cursor:pointer}
+/* ── PDF EXPORT ── */
 .pdf-export-btn{width:34px;height:34px;border-radius:50%;border:none;background:var(--surface);color:var(--acc);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.1);transition:all .15s;flex-shrink:0}
 .pdf-export-btn:hover{background:var(--acc-l)}
 .pdf-modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:80;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
@@ -658,6 +694,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
     <div class="api-row">
       <input type="password" class="api-input" id="api-key-inp" placeholder="sk-ant-…">
       <button class="api-btn" onclick="saveApiKey()">Guardar</button>
+    </div>
+  </div>
+
+  <!-- SUPABASE CONFIG -->
+  <div class="sb-banner" id="sb-banner">
+    <b>🔗 Conectar a Supabase</b>
+    Los datos se leerán y guardarán directamente en la base de datos.
+    <div class="sb-row">
+      <input type="url" class="sb-input" id="sb-url-inp" placeholder="https://xxxx.supabase.co">
+      <input type="password" class="sb-input" id="sb-key-inp" placeholder="Anon Key (eyJ…)">
+      <button class="sb-btn" onclick="saveSupabaseConfig()">Conectar</button>
+    </div>
+    <div class="sb-status" id="sb-status"></div>
+  </div>
+
+  <!-- MIGRATION BANNER -->
+  <div class="mig-banner" id="mig-banner">
+    <b id="mig-title">📦 Datos locales pendientes de migrar</b>
+    <div id="mig-desc">Hay pendientes guardados en este dispositivo. Envíalos a Supabase para que estén disponibles en todos tus dispositivos.</div>
+    <div class="mig-btns">
+      <button class="mig-btn-primary" id="mig-btn-go" onclick="migrarASupabase()">⬆️ Migrar a Supabase</button>
+      <button class="mig-btn-secondary" onclick="limpiarLocalStorage()">🗑️ Borrar datos locales</button>
+      <button class="mig-btn-link" onclick="document.getElementById('mig-banner').classList.remove('on')">Ignorar</button>
     </div>
   </div>
 
@@ -948,9 +1007,22 @@ function init(){
   pendientes=JSON.parse(localStorage.getItem(SK)||'[]');
   listas=JSON.parse(localStorage.getItem(LK)||'[]');
   apiKey=localStorage.getItem(AK)||'';
+  // Init Supabase
+  const sbReady=initSupabase();
   const uid=localStorage.getItem(UK);
   if(uid){const u=USUARIOS.find(x=>x.id===uid);if(u)setActiveUser(u,false);}
   renderUserList();
+  // If Supabase is ready, show config status and load
+  if(sbReady){
+    // Supabase connected - load fresh data
+    if(activeUser){
+      loadFromSupabase().then(()=>{renderAll();checkMigrationBanner();});
+    }
+  } else {
+    // Show Supabase config banner
+    document.getElementById('sb-banner').classList.add('on');
+    document.getElementById('sb-url-inp').value=localStorage.getItem(SB_URL_KEY)||'';
+  }
 }
 
 /* ══ USER ══ */
@@ -967,7 +1039,65 @@ function setActiveUser(u,save=true){
   populateSelects();
   document.getElementById('m-fecha').min=new Date().toISOString().split('T')[0];
   document.getElementById('pv-fecha').min=new Date().toISOString().split('T')[0];
+  // Detect orphan pendientes from previous test sessions
+  checkOrphanPendientes();
   renderAll();
+}
+
+function checkOrphanPendientes(){
+  if(!activeUser||!pendientes.length) return;
+  const mine=pendientes.filter(p=>p.creado_por===activeUser.id||p.responsable===activeUser.id).length;
+  const orphans=pendientes.filter(p=>p.creado_por!==activeUser.id&&p.responsable!==activeUser.id);
+  if(mine===0&&orphans.length>0){
+    // Show migration banner
+    showMigrationBanner(orphans.length);
+  } else {
+    hideMigrationBanner();
+  }
+}
+
+function showMigrationBanner(count){
+  let banner=document.getElementById('migration-banner');
+  if(!banner){
+    banner=document.createElement('div');
+    banner.id='migration-banner';
+    banner.style.cssText='background:#fff4de;border:1px solid #ff9500;border-radius:10px;padding:13px 14px;margin-bottom:12px;font-size:13px;color:#7a4500';
+    document.getElementById('main-content').insertBefore(banner, document.getElementById('no-user-msg').nextSibling);
+  }
+  banner.innerHTML=`<div style="font-weight:700;margin-bottom:4px">📦 ${count} pendiente${count!==1?'s':''} de sesiones anteriores</div>
+    <div style="margin-bottom:10px;color:#92400e">Hay datos de prueba guardados con IDs anteriores que no corresponden a tu usuario actual.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="migrarPendientes()" style="padding:7px 14px;background:#ff9500;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Asignar a mi cuenta</button>
+      <button onclick="limpiarPendientes()" style="padding:7px 14px;background:none;border:1px solid #ff9500;color:#7a4500;border-radius:8px;font-size:13px;cursor:pointer">Borrar datos de prueba</button>
+      <button onclick="hideMigrationBanner()" style="padding:7px 10px;background:none;border:none;color:#92400e;font-size:13px;cursor:pointer">Ignorar</button>
+    </div>`;
+  banner.style.display='block';
+}
+
+function hideMigrationBanner(){
+  const b=document.getElementById('migration-banner');if(b)b.style.display='none';
+}
+
+function migrarPendientes(){
+  if(!activeUser)return;
+  let count=0;
+  pendientes.forEach(p=>{
+    if(p.creado_por!==activeUser.id){p.creado_por=activeUser.id;count++;}
+    if(p.responsable&&p.responsable!==activeUser.id&&!USUARIOS.find(u=>u.id===p.responsable)){p.responsable=activeUser.id;}
+  });
+  savePendientes();
+  hideMigrationBanner();
+  renderAll();
+  showToast(`✅ ${count} pendiente${count!==1?'s':''} migrado${count!==1?'s':''} a tu cuenta`);
+}
+
+function limpiarPendientes(){
+  if(!confirm('¿Eliminar todos los datos de prueba? Esta acción no se puede deshacer.'))return;
+  pendientes=pendientes.filter(p=>p.creado_por===activeUser.id||p.responsable===activeUser.id);
+  savePendientes();
+  hideMigrationBanner();
+  renderAll();
+  showToast('🗑️ Datos de prueba eliminados');
 }
 function openIdModal(){document.getElementById('id-modal').classList.add('open');}
 function closeIdModal(){document.getElementById('id-modal').classList.remove('open');}
@@ -1137,8 +1267,9 @@ function guardarDesdePreview(){
 
 /* ══ SAVE COMÚN ══ */
 function guardarPendiente(data){
-  pendientes.unshift({id:genId(),texto:data.texto,texto_original:data.texto_original||null,creado_por:activeUser.id,responsable:data.responsable,tipo:data.tipo,formato:data.formato||'normal',checklist_items:data.checklist_items||[],seguimiento_id:data.seguimiento_id||null,lista_id:data.lista_id||null,modulo_origen:data.modulo_origen,registro_id:data.registro_id,fecha_limite:data.fecha_limite,estatus:'pendiente',fecha_creacion:new Date().toISOString(),chat:[]});
-  savePendientes();renderAll();showToast('✅ Pendiente guardado');
+  const nuevo={id:genId(),texto:data.texto,texto_original:data.texto_original||null,creado_por:activeUser.id,responsable:data.responsable,tipo:data.tipo,formato:data.formato||'normal',checklist_items:data.checklist_items||[],seguimiento_id:data.seguimiento_id||null,lista_id:data.lista_id||null,modulo_origen:data.modulo_origen,registro_id:data.registro_id,fecha_limite:data.fecha_limite,estatus:'pendiente',fecha_creacion:new Date().toISOString(),chat:[]};
+  pendientes.unshift(nuevo);
+  savePendientes(nuevo.id);renderAll();showToast('✅ Pendiente guardado');
 }
 
 /* ══ LISTAS ══ */
@@ -1148,13 +1279,13 @@ function toggleListaCreate(){
 }
 function crearLista(){
   const inp=document.getElementById('new-lista-inp');const titulo=inp?.value.trim();if(!titulo)return;
-  listas.push({id:genId(),titulo,creado_por:activeUser.id,fecha_creacion:new Date().toISOString(),open:true});
-  saveListas();showListaCreate=false;populateListaSelect();renderAll();showToast('📂 Lista creada');
+  const nl={id:genId(),titulo,creado_por:activeUser.id,fecha_creacion:new Date().toISOString(),open:true};
+  listas.push(nl);
+  saveListas(nl.id);showListaCreate=false;populateListaSelect();renderAll();showToast('📂 Lista creada');
 }
 function deleteLista(id){
-  // Move pendientes to ungrouped
   pendientes.forEach(p=>{if(p.lista_id===id)p.lista_id=null;});
-  listas=listas.filter(l=>l.id!==id);savePendientes();saveListas();renderAll();showToast('Lista eliminada');
+  listas=listas.filter(l=>l.id!==id);savePendientes();saveListas();if(sb)sbDeleteLista(id);renderAll();showToast('Lista eliminada');
 }
 function toggleListaOpen(id){const l=listas.find(x=>x.id===id);if(l)l.open=!l.open;saveListas();renderListaSection();}
 /* ══ CAPTURE PANEL ══ */
@@ -1231,19 +1362,19 @@ function toggleClItem(pendienteId,itemId){
   if(done===total&&total>0){p.estatus='resuelto';showToast('✅ Checklist completado — ticket cerrado');}
   else if(done>0)p.estatus='en_proceso';
   else p.estatus='pendiente';
-  savePendientes();renderAll();
+  savePendientes(pendienteId);renderAll();
 }
 function addClItemToCard(pendienteId){
   const p=pendientes.find(x=>x.id===pendienteId);if(!p)return;
   const texto=prompt('Nuevo item:');if(!texto||!texto.trim())return;
   if(!p.checklist_items)p.checklist_items=[];
   p.checklist_items.push({id:genId(),texto:texto.trim(),completado:false});
-  savePendientes();renderAll();
+  savePendientes(pendienteId);renderAll();
 }
 function deleteClItem(pendienteId,itemId){
   const p=pendientes.find(x=>x.id===pendienteId);if(!p)return;
   p.checklist_items=p.checklist_items.filter(i=>i.id!==itemId);
-  savePendientes();renderAll();
+  savePendientes(pendienteId);renderAll();
 }
 function saveClItemEdit(pendienteId,itemId,el){
   const p=pendientes.find(x=>x.id===pendienteId);if(!p)return;
@@ -1666,15 +1797,25 @@ function ejecutarImport(){
 function quickResolve(id){cambiarEstatus(id,'resuelto');showToast('✅ Resuelto');}
 function openStatusMenu(e,id){e.stopPropagation();menuTargetId=id;const m=document.getElementById('s-menu');m.classList.add('on');const rect=e.target.getBoundingClientRect();m.style.top=(rect.bottom+6)+'px';m.style.left=Math.min(rect.left,window.innerWidth-175)+'px';}
 function applyStatus(st){if(menuTargetId){cambiarEstatus(menuTargetId,st);showToast('Estado actualizado');menuTargetId=null;}document.getElementById('s-menu').classList.remove('on');}
-function cambiarEstatus(id,st){const p=pendientes.find(x=>x.id===id);if(p){p.estatus=st;savePendientes();renderAll();}}
+function cambiarEstatus(id,st){const p=pendientes.find(x=>x.id===id);if(p){p.estatus=st;savePendientes(id);renderAll();}}
 function confirmDel(id){delTargetId=id;document.getElementById('confirm-del').classList.add('open');}
 function closeConfirmDel(){delTargetId=null;document.getElementById('confirm-del').classList.remove('open');}
-function executeDel(){if(!delTargetId)return;pendientes=pendientes.filter(p=>p.id!==delTargetId);savePendientes();renderAll();closeConfirmDel();showToast('🗑️ Eliminado');}
+function executeDel(){if(!delTargetId)return;const did=delTargetId;pendientes=pendientes.filter(p=>p.id!==did);savePendientes();if(sb)sbDeletePendiente(did);renderAll();closeConfirmDel();showToast('🗑️ Eliminado');}
 function scrollToCapture(){openCapturePanel(null);}
 
 /* ══ HELPERS ══ */
-function savePendientes(){localStorage.setItem(SK,JSON.stringify(pendientes));}
-function saveListas(){localStorage.setItem(LK,JSON.stringify(listas));}
+function savePendientes(changedId){
+  localStorage.setItem(SK,JSON.stringify(pendientes));
+  // Write changed pendiente to Supabase
+  if(sb&&changedId){
+    const p=pendientes.find(x=>x.id===changedId);
+    if(p) sbSavePendiente(p);
+  }
+}
+function saveListas(changedId){
+  localStorage.setItem(LK,JSON.stringify(listas));
+  if(sb&&changedId){const l=listas.find(x=>x.id===changedId);if(l)sbSaveLista(l);}
+}
 function genId(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).substr(2);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function showHide(id,show){const el=document.getElementById(id);if(!el)return;if(show){el.classList.remove('hidden');el.style.maxHeight='300px';el.style.opacity='1';}else el.classList.add('hidden');}
@@ -1699,6 +1840,7 @@ function loadRespCfg(){
 function saveRespCfg(){
   const all=JSON.parse(localStorage.getItem(RC_KEY)||'{}');
   all[activeUser.id]=respCfg;localStorage.setItem(RC_KEY,JSON.stringify(all));
+  if(sb) sbSaveRespCfg();
 }
 
 /* COLOR PICKER */
@@ -1971,7 +2113,7 @@ function saveDetailEdits(id){
   p.modulo_origen=document.getElementById('det-e-modulo').value||null;
   p.registro_id=document.getElementById('det-e-reg').value.trim()||null;
   p.fecha_limite=document.getElementById('det-e-fecha').value||null;
-  savePendientes();detailEditMode=false;renderAll();renderDetailPanel(p);showToast('✅ Pendiente actualizado');
+  savePendientes(p.id);detailEditMode=false;renderAll();renderDetailPanel(p);showToast('✅ Pendiente actualizado');
 }
 
 /* ══ CHAT ══ */
@@ -2445,6 +2587,260 @@ function volverCaptura(){
   document.getElementById('ia-section').style.display='block';
   document.getElementById('manual-section').style.display='none';
   document.getElementById('cap-ttl').textContent='Nuevo pendiente';
+}
+
+/* ══════════════════════════════════════════════════════
+   SUPABASE — CAPA DE DATOS
+   Fuente de verdad: Supabase. localStorage = caché local.
+   Esquema: usuarios, pendientes, pendiente_checklist_items,
+            listas_pendientes, responsable_colores,
+            responsable_grupos, responsable_grupo_miembros
+   Nota: campo `chat` solo en localStorage (sin tabla BD aún)
+══════════════════════════════════════════════════════ */
+const SB_URL_KEY='gmantto_sb_url', SB_KEY_KEY='gmantto_sb_key';
+let sb=null; // Supabase client
+
+/* ── INIT SUPABASE ── */
+function initSupabase(){
+  const url=localStorage.getItem(SB_URL_KEY);
+  const key=localStorage.getItem(SB_KEY_KEY);
+  if(!url||!key) return false;
+  try{
+    sb=window.supabase.createClient(url,key);
+    return true;
+  }catch(e){console.error('Supabase init error:',e);return false;}
+}
+
+async function saveSupabaseConfig(){
+  const url=document.getElementById('sb-url-inp').value.trim();
+  const key=document.getElementById('sb-key-inp').value.trim();
+  const status=document.getElementById('sb-status');
+  if(!url||!key){status.textContent='⚠️ Ingresa URL y Anon Key';status.className='sb-status err';return;}
+  try{
+    const client=window.supabase.createClient(url,key);
+    // Test connection
+    const {error}=await client.from('usuarios').select('id').limit(1);
+    if(error)throw error;
+    sb=client;
+    localStorage.setItem(SB_URL_KEY,url);
+    localStorage.setItem(SB_KEY_KEY,key);
+    document.getElementById('sb-url-inp').value='';
+    document.getElementById('sb-key-inp').value='';
+    status.textContent='✅ Conectado correctamente';
+    status.className='sb-status ok';
+    document.getElementById('sb-banner').classList.remove('on');
+    showToast('✅ Supabase conectado');
+    await loadFromSupabase();
+    checkMigrationBanner();
+    renderAll();
+  }catch(e){
+    status.textContent=`❌ Error: ${e.message||'No se pudo conectar'}`;
+    status.className='sb-status err';
+  }
+}
+
+/* ── MAPPERS ── */
+function mapUserFromDB(u){
+  return{id:u.id,nombre:u.nombre,rol:u.rol,area:u.area,equipo:u.equipo,ini:u.iniciales,color:u.color||'#6b7280',aut:u.autorizacion};
+}
+function pendienteForDB(p){
+  return{
+    id:p.id, texto:p.texto, texto_original:p.texto_original||null,
+    creado_por:p.creado_por, responsable:p.responsable||null,
+    tipo:p.tipo, formato:p.formato||'normal',
+    seguimiento_id:p.seguimiento_id||null, lista_id:p.lista_id||null,
+    modulo_origen:p.modulo_origen||null, registro_id:p.registro_id||null,
+    fecha_limite:p.fecha_limite||null, estatus:p.estatus||'pendiente',
+    fecha_creacion:p.fecha_creacion||new Date().toISOString()
+  };
+}
+function listaForDB(l){
+  return{id:l.id,titulo:l.titulo,creado_por:l.creado_por,abierta:l.open!==false};
+}
+
+/* ── LOAD FROM SUPABASE ── */
+async function loadFromSupabase(){
+  if(!sb||!activeUser)return;
+  const uid=activeUser.id;
+  try{
+    // 1. Users (refresh full list)
+    const{data:users,error:uErr}=await sb.from('usuarios').select('*').eq('activo',true).order('nombre');
+    if(!uErr&&users){USUARIOS.splice(0,USUARIOS.length,...users.map(mapUserFromDB));}
+
+    // 2. Pendientes (where I'm involved)
+    const{data:pends,error:pErr}=await sb.from('pendientes').select('*')
+      .or(`creado_por.eq.${uid},responsable.eq.${uid}`)
+      .order('fecha_creacion',{ascending:false});
+
+    // 3. Checklist items for those pendientes
+    let clItems=[];
+    if(pends&&pends.length){
+      const ids=pends.map(p=>p.id);
+      const{data:cl}=await sb.from('pendiente_checklist_items').select('*')
+        .in('pendiente_id',ids).order('orden');
+      clItems=cl||[];
+    }
+
+    if(!pErr&&pends){
+      // Merge checklist items + preserve local chat
+      const localPends=JSON.parse(localStorage.getItem(SK)||'[]');
+      pendientes=pends.map(p=>({
+        ...p,
+        checklist_items:clItems.filter(c=>c.pendiente_id===p.id).map(c=>({id:c.id,texto:c.texto,completado:c.completado})),
+        chat:(localPends.find(lp=>lp.id===p.id)||{}).chat||[]
+      }));
+      localStorage.setItem(SK,JSON.stringify(pendientes));
+    }
+
+    // 4. Listas
+    const{data:lsts}=await sb.from('listas_pendientes').select('*').eq('creado_por',uid);
+    if(lsts){
+      listas=lsts.map(l=>({id:l.id,titulo:l.titulo,creado_por:l.creado_por,open:l.abierta!==false,fecha_creacion:l.fecha_creacion}));
+      localStorage.setItem(LK,JSON.stringify(listas));
+    }
+
+    // 5. Responsable colors
+    const{data:colors}=await sb.from('responsable_colores').select('*').eq('propietario_id',uid);
+
+    // 6. Responsable groups + members
+    const{data:grupos}=await sb.from('responsable_grupos').select('*').eq('propietario_id',uid);
+    let miembros=[];
+    if(grupos&&grupos.length){
+      const gids=grupos.map(g=>g.id);
+      const{data:m}=await sb.from('responsable_grupo_miembros').select('*').in('grupo_id',gids);
+      miembros=m||[];
+    }
+    if(colors||grupos){
+      loadRespCfg();
+      if(colors){respCfg.colors={};colors.forEach(c=>{respCfg.colors[c.responsable_id]=c.color;});}
+      if(grupos){respCfg.groups=grupos.map(g=>({id:g.id,nombre:g.nombre,color:g.color,miembros:miembros.filter(m=>m.grupo_id===g.id).map(m=>m.usuario_id)}));}
+      saveRespCfg();
+    }
+  }catch(e){console.error('loadFromSupabase error:',e);}
+}
+
+/* ── SAVE TO SUPABASE ── */
+async function sbSavePendiente(p){
+  if(!sb)return;
+  try{
+    const{error}=await sb.from('pendientes').upsert(pendienteForDB(p));
+    if(error)throw error;
+    if(p.formato==='checklist'&&p.checklist_items){
+      await sb.from('pendiente_checklist_items').delete().eq('pendiente_id',p.id);
+      if(p.checklist_items.length){
+        await sb.from('pendiente_checklist_items').insert(
+          p.checklist_items.map((it,i)=>({pendiente_id:p.id,texto:it.texto,completado:it.completado||false,orden:i}))
+        );
+      }
+    }
+  }catch(e){console.error('sbSavePendiente error:',e);}
+}
+
+async function sbDeletePendiente(id){
+  if(!sb)return;
+  await sb.from('pendientes').delete().eq('id',id);
+}
+
+async function sbSaveLista(l){
+  if(!sb)return;
+  await sb.from('listas_pendientes').upsert(listaForDB(l));
+}
+
+async function sbDeleteLista(id){
+  if(!sb)return;
+  await sb.from('listas_pendientes').delete().eq('id',id);
+}
+
+async function sbSaveRespCfg(){
+  if(!sb||!activeUser)return;
+  const uid=activeUser.id;
+  try{
+    if(respCfg.colors&&Object.keys(respCfg.colors).length){
+      const rows=Object.entries(respCfg.colors).map(([rid,col])=>({propietario_id:uid,responsable_id:rid,color:col}));
+      await sb.from('responsable_colores').upsert(rows);
+    }
+    for(const g of(respCfg.groups||[])){
+      await sb.from('responsable_grupos').upsert({id:g.id,propietario_id:uid,nombre:g.nombre,color:g.color||'#6b7280'});
+      await sb.from('responsable_grupo_miembros').delete().eq('grupo_id',g.id);
+      if(g.miembros?.length){
+        await sb.from('responsable_grupo_miembros').insert(g.miembros.map(uid=>({grupo_id:g.id,usuario_id:uid})));
+      }
+    }
+  }catch(e){console.error('sbSaveRespCfg error:',e);}
+}
+
+/* ── MIGRATION: localStorage → Supabase ── */
+function checkMigrationBanner(){
+  if(!sb||!activeUser)return;
+  const localPends=JSON.parse(localStorage.getItem(SK)||'[]');
+  const localListas=JSON.parse(localStorage.getItem(LK)||'[]');
+  const total=localPends.length+localListas.length;
+  if(total>0){
+    document.getElementById('mig-title').textContent=`📦 ${total} elemento${total!==1?'s':''} en almacenamiento local`;
+    document.getElementById('mig-desc').textContent=`${localPends.length} pendiente${localPends.length!==1?'s':''} y ${localListas.length} lista${localListas.length!==1?'s':''} guardados en este dispositivo. Migra a Supabase para sincronizar con todos tus dispositivos.`;
+    document.getElementById('mig-banner').classList.add('on');
+  }
+}
+
+async function migrarASupabase(){
+  if(!sb||!activeUser){showToast('⚠️ Conecta Supabase primero');return;}
+  const btn=document.getElementById('mig-btn-go');
+  btn.disabled=true;btn.textContent='⬆️ Migrando…';
+  const localPends=JSON.parse(localStorage.getItem(SK)||'[]');
+  const localListas=JSON.parse(localStorage.getItem(LK)||'[]');
+  let ok=0,errors=0;
+  try{
+    // Migrate listas first (pendientes may reference them)
+    for(const l of localListas){
+      const{error}=await sb.from('listas_pendientes').upsert(listaForDB(l));
+      if(error)console.error('Lista error:',error);else ok++;
+    }
+    // Migrate pendientes
+    for(const p of localPends){
+      const{error}=await sb.from('pendientes').upsert(pendienteForDB(p));
+      if(error){console.error('Pendiente error:',error);errors++;continue;}
+      // Checklist items
+      if(p.formato==='checklist'&&p.checklist_items?.length){
+        await sb.from('pendiente_checklist_items').delete().eq('pendiente_id',p.id);
+        await sb.from('pendiente_checklist_items').insert(
+          p.checklist_items.map((it,i)=>({pendiente_id:p.id,texto:it.texto,completado:it.completado||false,orden:i}))
+        );
+      }
+      ok++;
+    }
+    // Migrate resp config
+    const allCfg=JSON.parse(localStorage.getItem(RC_KEY)||'{}');
+    const myCfg=allCfg[activeUser.id]||{};
+    if(myCfg.colors&&Object.keys(myCfg.colors).length){
+      const rows=Object.entries(myCfg.colors).map(([rid,col])=>({propietario_id:activeUser.id,responsable_id:rid,color:col}));
+      await sb.from('responsable_colores').upsert(rows);
+    }
+    for(const g of(myCfg.groups||[])){
+      await sb.from('responsable_grupos').upsert({id:g.id,propietario_id:activeUser.id,nombre:g.nombre,color:g.color||'#6b7280'});
+      if(g.miembros?.length){
+        await sb.from('responsable_grupo_miembros').delete().eq('grupo_id',g.id);
+        await sb.from('responsable_grupo_miembros').insert(g.miembros.map(uid=>({grupo_id:g.id,usuario_id:uid})));
+      }
+    }
+    // Clear local data after successful migration
+    localStorage.removeItem(SK);localStorage.removeItem(LK);
+    document.getElementById('mig-banner').classList.remove('on');
+    showToast(`✅ Migración completa: ${ok} elementos migrados${errors?`, ${errors} errores`:''}`);
+    // Reload from Supabase
+    await loadFromSupabase();
+    renderAll();
+  }catch(e){
+    showToast(`❌ Error en migración: ${e.message}`);
+    btn.disabled=false;btn.textContent='⬆️ Migrar a Supabase';
+  }
+}
+
+function limpiarLocalStorage(){
+  if(!confirm('¿Eliminar todos los datos locales? Esta acción no se puede deshacer.'))return;
+  localStorage.removeItem(SK);localStorage.removeItem(LK);
+  pendientes=[];listas=[];
+  document.getElementById('mig-banner').classList.remove('on');
+  renderAll();showToast('🗑️ Datos locales eliminados');
 }
 
 init();
