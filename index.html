@@ -697,18 +697,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
     </div>
   </div>
 
-  <!-- SUPABASE CONFIG -->
-  <div class="sb-banner" id="sb-banner">
-    <b>🔗 Conectar a Supabase</b>
-    Los datos se leerán y guardarán directamente en la base de datos.
-    <div class="sb-row">
-      <input type="url" class="sb-input" id="sb-url-inp" placeholder="https://xxxx.supabase.co">
-      <input type="password" class="sb-input" id="sb-key-inp" placeholder="Anon Key (eyJ…)">
-      <button class="sb-btn" onclick="saveSupabaseConfig()">Conectar</button>
-    </div>
-    <div class="sb-status" id="sb-status"></div>
-  </div>
-
   <!-- MIGRATION BANNER -->
   <div class="mig-banner" id="mig-banner">
     <b id="mig-title">📦 Datos locales pendientes de migrar</b>
@@ -1007,22 +995,27 @@ function init(){
   pendientes=JSON.parse(localStorage.getItem(SK)||'[]');
   listas=JSON.parse(localStorage.getItem(LK)||'[]');
   apiKey=localStorage.getItem(AK)||'';
-  // Init Supabase
-  const sbReady=initSupabase();
+  // Conectar Supabase de forma nativa
+  initSupabase();
   const uid=localStorage.getItem(UK);
-  if(uid){const u=USUARIOS.find(x=>x.id===uid);if(u)setActiveUser(u,false);}
-  renderUserList();
-  // If Supabase is ready, show config status and load
-  if(sbReady){
-    // Supabase connected - load fresh data
-    if(activeUser){
-      loadFromSupabase().then(()=>{renderAll();checkMigrationBanner();});
-    }
+  if(uid){
+    // Try to load users from Supabase first, then set active user
+    loadUsersFromSupabase().then(()=>{
+      const u=USUARIOS.find(x=>x.id===uid);
+      if(u) setActiveUser(u,false);
+      renderUserList();
+    });
   } else {
-    // Show Supabase config banner
-    document.getElementById('sb-banner').classList.add('on');
-    document.getElementById('sb-url-inp').value=localStorage.getItem(SB_URL_KEY)||'';
+    renderUserList();
   }
+}
+
+async function loadUsersFromSupabase(){
+  if(!sb) return;
+  try{
+    const{data:users,error}=await sb.from('usuarios').select('*').eq('activo',true).order('nombre');
+    if(!error&&users&&users.length) USUARIOS.splice(0,USUARIOS.length,...users.map(mapUserFromDB));
+  }catch(e){console.error('loadUsers error:',e);}
 }
 
 /* ══ USER ══ */
@@ -1040,8 +1033,13 @@ function setActiveUser(u,save=true){
   document.getElementById('m-fecha').min=new Date().toISOString().split('T')[0];
   document.getElementById('pv-fecha').min=new Date().toISOString().split('T')[0];
   // Detect orphan pendientes from previous test sessions
-  checkOrphanPendientes();
-  renderAll();
+  // Load data from Supabase for this user
+  if(sb){
+    loadFromSupabase().then(()=>{renderAll();checkMigrationBanner();checkOrphanPendientes();});
+  } else {
+    checkOrphanPendientes();
+    renderAll();
+  }
 }
 
 function checkOrphanPendientes(){
@@ -2597,46 +2595,16 @@ function volverCaptura(){
             responsable_grupos, responsable_grupo_miembros
    Nota: campo `chat` solo en localStorage (sin tabla BD aún)
 ══════════════════════════════════════════════════════ */
-const SB_URL_KEY='gmantto_sb_url', SB_KEY_KEY='gmantto_sb_key';
-let sb=null; // Supabase client
+/* ── SUPABASE — CONEXIÓN NATIVA ── */
+const _SB_URL='https://qulldafyewynmwdxkjsf.supabase.co';
+const _SB_KEY='sb_publishable_B5tpfugNTnOsHymgxWCrWw_H8Yv9V1e';
+let sb=null;
 
-/* ── INIT SUPABASE ── */
 function initSupabase(){
-  const url=localStorage.getItem(SB_URL_KEY);
-  const key=localStorage.getItem(SB_KEY_KEY);
-  if(!url||!key) return false;
   try{
-    sb=window.supabase.createClient(url,key);
+    sb=window.supabase.createClient(_SB_URL,_SB_KEY);
     return true;
-  }catch(e){console.error('Supabase init error:',e);return false;}
-}
-
-async function saveSupabaseConfig(){
-  const url=document.getElementById('sb-url-inp').value.trim();
-  const key=document.getElementById('sb-key-inp').value.trim();
-  const status=document.getElementById('sb-status');
-  if(!url||!key){status.textContent='⚠️ Ingresa URL y Anon Key';status.className='sb-status err';return;}
-  try{
-    const client=window.supabase.createClient(url,key);
-    // Test connection
-    const {error}=await client.from('usuarios').select('id').limit(1);
-    if(error)throw error;
-    sb=client;
-    localStorage.setItem(SB_URL_KEY,url);
-    localStorage.setItem(SB_KEY_KEY,key);
-    document.getElementById('sb-url-inp').value='';
-    document.getElementById('sb-key-inp').value='';
-    status.textContent='✅ Conectado correctamente';
-    status.className='sb-status ok';
-    document.getElementById('sb-banner').classList.remove('on');
-    showToast('✅ Supabase conectado');
-    await loadFromSupabase();
-    checkMigrationBanner();
-    renderAll();
-  }catch(e){
-    status.textContent=`❌ Error: ${e.message||'No se pudo conectar'}`;
-    status.className='sb-status err';
-  }
+  }catch(e){console.error('Supabase init error:',e);sb=null;return false;}
 }
 
 /* ── MAPPERS ── */
