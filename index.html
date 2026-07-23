@@ -163,6 +163,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .lista-create-row .btn-cancel{padding:9px 10px;border:1px solid var(--border);background:none;border-radius:var(--rsm);font-size:13px;color:var(--t2);cursor:pointer}
 .lista-card{background:var(--surface);border:none;border-radius:var(--r);margin-bottom:10px;box-shadow:var(--shadow);overflow:hidden}
 .lista-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;transition:background .1s}
+.lista-color-dot{width:14px;height:14px;border-radius:50%;cursor:pointer;flex-shrink:0;border:1.5px solid rgba(0,0,0,.12);transition:transform .15s}
+.lista-color-dot:hover{transform:scale(1.25)}
 .lista-hdr:hover{background:var(--bg)}
 .lista-chevron{font-size:12px;color:var(--tm);transition:transform .2s;flex-shrink:0}
 .lista-chevron.open{transform:rotate(90deg)}
@@ -595,6 +597,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .mig-btn-primary:disabled{opacity:.5;cursor:wait}
 .mig-btn-secondary{padding:8px 14px;background:none;border:1px solid #ff9500;color:#7a4500;border-radius:var(--rsm);font-size:13px;cursor:pointer}
 .mig-btn-link{padding:8px 4px;background:none;border:none;color:#92400e;font-size:13px;cursor:pointer}
+/* ── ADJUNTOS (crear y detalle) ── */
+.adj-btn-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.adj-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px dashed var(--border);border-radius:var(--rsm);font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .15s;background:none;user-select:none;-webkit-user-select:none}
+.adj-btn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-l)}
+.adj-previews{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.adj-preview{position:relative}
+.adj-preview img{width:72px;height:72px;object-fit:cover;border-radius:var(--rsm);display:block;border:1px solid var(--border)}
+.adj-preview-file{display:flex;align-items:center;gap:5px;padding:7px 10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rsm);font-size:11px;color:var(--t2);max-width:150px;overflow:hidden}
+.adj-preview-fname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adj-rm{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.det-adjuntos{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.det-adj-img{width:80px;height:80px;object-fit:cover;border-radius:var(--rsm);cursor:pointer;border:1px solid var(--border);display:block}
+.det-adj-img:hover{opacity:.85}
+.det-adj-file{display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rsm);font-size:12px;color:var(--t2);cursor:pointer;text-decoration:none;max-width:180px}
+.det-adj-file:hover{background:var(--acc-l);border-color:var(--acc);color:var(--acc)}
+.adj-count-tag{color:var(--tm);background:rgba(120,120,128,.1)}
+
 /* ── CHAT BADGE (unread messages) ── */
 .chat-badge{background:var(--danger);color:#fff;border-radius:var(--pill);min-width:18px;height:18px;padding:0 5px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 5px rgba(220,38,38,.4);letter-spacing:.2px}
 
@@ -806,6 +825,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
           <label class="pv-label">ID de registro</label><input type="text" class="pv-input" id="pv-registro" placeholder="P12345…">
         </div>
         <div class="pv-field"><label class="pv-label">📅 Fecha límite</label><input type="date" class="pv-input" id="pv-fecha"></div>
+        <div class="pv-field">
+          <label class="pv-label">Adjuntos <span style="font-weight:400;text-transform:none;color:var(--tm)">(opcional)</span></label>
+          <div class="adj-previews" id="pv-adj-list"></div>
+          <div class="adj-btn-row">
+            <label class="adj-btn" for="pv-adj-img">📷 Imagen</label>
+            <label class="adj-btn" for="pv-adj-file">📎 Archivo</label>
+          </div>
+          <input type="file" id="pv-adj-img" accept="image/*" style="display:none" onchange="addAdjuntoToForm('pv',event)">
+          <input type="file" id="pv-adj-file" style="display:none" onchange="addAdjuntoToForm('pv',event)">
+        </div>
       </div>
       <div class="preview-actions">
         <button class="btn-volver" onclick="volverCaptura()">← Editar texto</button>
@@ -853,6 +882,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
       <div class="fgroup"><label class="flabel">Fecha límite <span class="opt">(opcional)</span></label>
         <input type="date" class="f-input" id="m-fecha">
       </div>
+      <div class="fgroup">
+        <label class="flabel">Adjuntos <span class="opt">(opcional)</span></label>
+        <div class="adj-previews" id="m-adj-list"></div>
+        <div class="adj-btn-row">
+          <label class="adj-btn" for="m-adj-img" onclick="mAdjType='imagen'">📷 Imagen</label>
+          <label class="adj-btn" for="m-adj-file" onclick="mAdjType='archivo'">📎 Archivo</label>
+        </div>
+        <input type="file" id="m-adj-img" accept="image/*" style="display:none" onchange="addAdjuntoToForm('m',event)">
+        <input type="file" id="m-adj-file" style="display:none" onchange="addAdjuntoToForm('m',event)">
+      </div>
       <button class="btn-save-m" id="btn-save-m" onclick="guardarManual()" disabled>Guardar pendiente</button>
     </div>
   </div>
@@ -863,8 +902,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
   <div class="det-hdr" id="det-hdr"></div>
   <div class="det-body" id="det-body"></div>
   <div class="chat-input-bar" id="chat-input-bar" style="display:none">
-    <button class="chat-attach-btn" onclick="triggerChatImg()" title="Imagen">📷</button>
-    <button class="chat-attach-btn" onclick="triggerChatFile()" title="Archivo">📎</button>
+    <label class="chat-attach-btn" for="chat-img-inp" title="Imagen" onclick="chatPendienteId=currentDetailId">📷</label>
+    <label class="chat-attach-btn" for="chat-file-inp" title="Archivo" onclick="chatPendienteId=currentDetailId">📎</label>
     <input type="text" class="chat-text-input" id="chat-text-input" placeholder="Mensaje de seguimiento…" onkeydown="if(event.key==='Enter')sendChatMsg()">
     <button class="chat-send-btn" onclick="sendChatMsg()">➤</button>
   </div>
@@ -983,7 +1022,7 @@ const USUARIOS=[
 ];
 
 /* ══ STATE ══ */
-const SK='gmantto_pend_v3',LK='gmantto_listas_v1',UK='gmantto_pend_user',AK='gmantto_api_key';
+const SK='gmantto_pend_v3',LK='gmantto_listas_v1',UK='gmantto_pend_user',AK='gmantto_api_key',LC_KEY='gmantto_lista_col';
 let activeUser=null,activeTab='recordatorios',activeFilter='all',activeSeg='all';
 let captureMode='ia',mTipo='recordatorio',mFormato='normal',pvTipo='recordatorio',pvFormato='normal';
 let pendientes=[],listas=[],menuTargetId=null,delTargetId=null;
@@ -1033,6 +1072,7 @@ function setActiveUser(u,save=true){
   document.getElementById('no-user-msg').style.display='none';
   if(!apiKey)document.getElementById('api-banner').classList.add('on');
   loadRespCfg();
+  loadListaColors();
   loadChatRead();
   populateSelects();
   document.getElementById('m-fecha').min=new Date().toISOString().split('T')[0];
@@ -1228,12 +1268,12 @@ function guardarManual(){
   const respId=mTipo==='asignado'?(document.getElementById('m-resp').value||null):activeUser.id;
   const listaId=mTipo==='recordatorio'?(document.getElementById('m-lista').value||null):null;
   const clItems=mFormato==='checklist'?mClItems.filter(i=>i.texto.trim()).map(i=>({id:i.id,texto:i.texto.trim(),completado:false})):[];
-  guardarPendiente({texto:tarea,tipo:mTipo,formato:mFormato,checklist_items:clItems,responsable:respId,seguimiento_id:mTipo==='recordatorio'?document.getElementById('m-seg').value||null:null,lista_id:listaId,modulo_origen:document.getElementById('m-modulo').value||null,registro_id:document.getElementById('m-registro').value.trim()||null,fecha_limite:document.getElementById('m-fecha').value||null});
+  guardarPendiente({texto:tarea,tipo:mTipo,formato:mFormato,checklist_items:clItems,responsable:respId,seguimiento_id:mTipo==='recordatorio'?document.getElementById('m-seg').value||null:null,lista_id:listaId,modulo_origen:document.getElementById('m-modulo').value||null,registro_id:document.getElementById('m-registro').value.trim()||null,fecha_limite:document.getElementById('m-fecha').value||null,adjuntos:[...mAdjuntos]});
   document.getElementById('m-texto').value='';document.getElementById('m-modulo').value='';
   document.getElementById('m-registro').value='';document.getElementById('m-fecha').value='';
   document.getElementById('m-seg').value='';document.getElementById('m-resp').value='';
   document.getElementById('btn-save-m').disabled=true;
-  mClItems=[];mFormato='normal';setMFormato('normal');setMTipo('recordatorio');
+  mClItems=[];mFormato='normal';setMFormato('normal');setMTipo('recordatorio');resetAdjuntos('m');
   showHide('m-sec-reg',false);selectedListaId=null;populateListaSelect();
   closeCapturePanel();
 }
@@ -1288,14 +1328,15 @@ function guardarDesdePreview(){
   const tarea=document.getElementById('pv-tarea').value.trim();if(!tarea)return;
   const respId=pvTipo==='asignado'?(document.getElementById('pv-resp').value||null):activeUser.id;
   const clItems=pvFormato==='checklist'?pvClItems.filter(i=>i.texto.trim()).map(i=>({id:i.id,texto:i.texto.trim(),completado:false})):[];
-  guardarPendiente({texto:tarea,texto_original:document.getElementById('ia-texto').value.trim(),tipo:pvTipo,formato:pvFormato,checklist_items:clItems,responsable:respId,seguimiento_id:pvTipo==='recordatorio'?document.getElementById('pv-seg').value||null:null,lista_id:null,modulo_origen:document.getElementById('pv-modulo').value||null,registro_id:document.getElementById('pv-registro').value.trim()||null,fecha_limite:document.getElementById('pv-fecha').value||null});
+  guardarPendiente({texto:tarea,texto_original:document.getElementById('ia-texto').value.trim(),tipo:pvTipo,formato:pvFormato,checklist_items:clItems,responsable:respId,seguimiento_id:pvTipo==='recordatorio'?document.getElementById('pv-seg').value||null:null,lista_id:null,modulo_origen:document.getElementById('pv-modulo').value||null,registro_id:document.getElementById('pv-registro').value.trim()||null,fecha_limite:document.getElementById('pv-fecha').value||null,adjuntos:[...pvAdjuntos]});
   document.getElementById('preview-card').classList.remove('on');document.getElementById('ia-texto').value='';document.getElementById('btn-procesar').disabled=true;pvClItems=[];
+  resetAdjuntos('pv');
   closeCapturePanel();
 }
 
 /* ══ SAVE COMÚN ══ */
 function guardarPendiente(data){
-  const nuevo={id:genId(),texto:data.texto,texto_original:data.texto_original||null,creado_por:activeUser.id,responsable:data.responsable,tipo:data.tipo,formato:data.formato||'normal',checklist_items:data.checklist_items||[],seguimiento_id:data.seguimiento_id||null,lista_id:data.lista_id||null,modulo_origen:data.modulo_origen,registro_id:data.registro_id,fecha_limite:data.fecha_limite,estatus:'pendiente',fecha_creacion:new Date().toISOString(),chat:[]};
+  const nuevo={id:genId(),texto:data.texto,texto_original:data.texto_original||null,creado_por:activeUser.id,responsable:data.responsable,tipo:data.tipo,formato:data.formato||'normal',checklist_items:data.checklist_items||[],seguimiento_id:data.seguimiento_id||null,lista_id:data.lista_id||null,modulo_origen:data.modulo_origen,registro_id:data.registro_id,fecha_limite:data.fecha_limite,estatus:'pendiente',fecha_creacion:new Date().toISOString(),chat:[],adjuntos:data.adjuntos||[]};
   pendientes.unshift(nuevo);
   savePendientes(nuevo.id);renderAll();showToast('✅ Pendiente guardado');
 }
@@ -1354,21 +1395,22 @@ function renderListaSection(){
   myListas.forEach(lista=>{
     const children=myRecs.filter(p=>p.lista_id===lista.id);
     const visible=children.filter(p=>applyFilter(p)&&applyFiltroSeg(p));
-    // No mostrar lista vacía cuando hay filtro activo
     if(hasFilter&&visible.length===0) return;
     const total=children.length,done=children.filter(p=>p.estatus==='resuelto').length;
     const pct=total===0?0:Math.round(done/total*100);
     const isOpen=lista.open!==false;
     const barColor=pct===100?'done':'';
-    html+=`<div class="lista-card"><div class="lista-hdr" onclick="toggleListaOpen('${lista.id}')"><span class="lista-chevron ${isOpen?'open':''}">›</span><span class="lista-title">${esc(lista.titulo)}</span><div class="lista-meta"><span class="lista-progress-text">${done}/${total}</span><div class="lista-bar"><div class="lista-bar-fill ${barColor}" style="width:${pct}%"></div></div></div><button class="btn-lista-del" onclick="event.stopPropagation();deleteLista('${lista.id}')" title="Eliminar lista">🗑</button></div>`;
+    const lColor=listaColors[lista.id]||null;
+    const dotStyle=lColor?`background:${lColor}`:`background:var(--border)`;
+    html+=`<div class="lista-card" ${lColor?`style="border-left:3px solid ${lColor}"`:''}><div class="lista-hdr" onclick="toggleListaOpen('${lista.id}')"><span class="lista-chevron ${isOpen?'open':''}">›</span><div class="lista-color-dot" style="${dotStyle}" onclick="event.stopPropagation();openColorPicker('lista','${lista.id}',this)" title="Color de lista"></div><span class="lista-title">${esc(lista.titulo)}</span><div class="lista-meta"><span class="lista-progress-text">${done}/${total}</span><div class="lista-bar"><div class="lista-bar-fill ${barColor}" style="width:${pct}%"></div></div></div><button class="btn-lista-del" onclick="event.stopPropagation();deleteLista('${lista.id}')" title="Eliminar lista">🗑</button></div>`;
     if(isOpen){
       html+=`<div class="lista-children">`;
-      visible.forEach(p=>{html+=renderCard(p,true);});
+      visible.forEach(p=>{html+=renderCard(p,true,lColor);});
       html+=`<button class="btn-add-to-lista" onclick="addToLista('${lista.id}')">＋ Agregar a esta lista</button></div>`;
     }
     html+=`</div>`;
   });
-  // Ungrouped
+  // Ungrouped — apply seguimiento color
   const ungrouped=myRecs.filter(p=>!p.lista_id).filter(p=>applyFilter(p)&&applyFiltroSeg(p));
   ungrouped.sort((a,b)=>{
     if(a.estatus==='resuelto'&&b.estatus!=='resuelto')return 1;
@@ -1377,7 +1419,11 @@ function renderListaSection(){
     if(aU&&!bU)return -1;if(!aU&&bU)return 1;
     return new Date(b.fecha_creacion)-new Date(a.fecha_creacion);
   });
-  if(ungrouped.length){html+=`<div class="ungrouped-label">Sin lista</div>`;ungrouped.forEach(p=>{html+=renderCard(p,false);});}
+  if(ungrouped.length){html+=`<div class="ungrouped-label">Sin lista</div>`;ungrouped.forEach(p=>{
+    // Apply seguimiento person color if set
+    const segColor=p.seguimiento_id?respCfg.colors[p.seguimiento_id]||null:null;
+    html+=renderCard(p,false,segColor);
+  });}
   if(!myListas.length&&!ungrouped.length)html+=`<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">Sin recordatorios</div><div class="empty-sub">Toca el botón de abajo para crear uno</div></div>`;
   html+=`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('recordatorio');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Nuevo recordatorio</button>`;
   document.getElementById('lista-pendientes').innerHTML=html;
@@ -1557,6 +1603,7 @@ function renderCard(p,insideLista,borderColor){
   if(p.modulo_origen){let lbl=p.modulo_origen.charAt(0).toUpperCase()+p.modulo_origen.slice(1);if(p.registro_id)lbl+=` · ${p.registro_id}`;meta+=`<span class="mtag mod">🔗 ${lbl}</span>`;}
   if(p.fecha_limite&&!res){const hoy=new Date();hoy.setHours(0,0,0,0);const lim=new Date(p.fecha_limite+'T00:00:00'),diff=Math.round((lim-hoy)/86400000);let fc='vence',ft='';if(diff<0){fc='vencido';ft=`🚨 Hace ${Math.abs(diff)}d`;}else if(diff===0)ft='⚠️ Hoy';else if(diff<=3)ft=`⏰ ${diff}d`;else ft=`📅 ${lim.toLocaleDateString('es-MX',{day:'numeric',month:'short'})}`;meta+=`<span class="mtag ${fc}">${ft}</span>`;}
   const fc=new Date(p.fecha_creacion);meta+=`<span class="mtag">${fc.toLocaleDateString('es-MX',{day:'numeric',month:'short'})}</span>`;
+  if(p.adjuntos&&p.adjuntos.length) meta+=`<span class="mtag adj-count-tag">📎 ${p.adjuntos.length}</span>`;
   let clBlock='';
   if(p.formato==='checklist'&&p.checklist_items?.length){
     const total=p.checklist_items.length,done=p.checklist_items.filter(i=>i.completado).length,pct=Math.round(done/total*100);
@@ -1888,6 +1935,42 @@ function getUnreadCount(p){
   return others.filter(m=>new Date(m.fecha)>new Date(lastRead)).length;
 }
 
+/* ══ ADJUNTOS (attachments on pendiente creation) ══ */
+let mAdjuntos=[], pvAdjuntos=[], mAdjType='imagen', pvAdjType='imagen';
+
+async function addAdjuntoToForm(prefix, e){
+  const file=e.target.files[0];if(!file)return;
+  e.target.value='';
+  const isImg=file.type.startsWith('image/');
+  try{
+    let contenido;
+    if(isImg){
+      // Las imágenes se redimensionan a 1200px — sin límite de tamaño de entrada
+      contenido=await resizeImageForChat(file);
+    } else{
+      if(file.size>10*1024*1024){showToast('Archivo demasiado grande (máx 10MB)');return;}
+      contenido=await new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(file);});
+    }
+    const adj={id:genId(),tipo:isImg?'imagen':'archivo',nombre_archivo:file.name,contenido,tamaño:file.size,mime_type:file.type};
+    if(prefix==='m'){mAdjuntos.push(adj);renderAdjPreviews('m');}
+    else{pvAdjuntos.push(adj);renderAdjPreviews('pv');}
+  }catch(e2){showToast('Error al procesar archivo');}
+}
+
+function renderAdjPreviews(prefix){
+  const list=prefix==='m'?mAdjuntos:pvAdjuntos;
+  const el=document.getElementById(`${prefix}-adj-list`);if(!el)return;
+  el.innerHTML=list.map((a,i)=>{
+    if(a.tipo==='imagen') return `<div class="adj-preview"><img src="${a.contenido}" alt="${esc(a.nombre_archivo)}"><button class="adj-rm" onclick="${prefix}Adjuntos.splice(${i},1);renderAdjPreviews('${prefix}')">×</button></div>`;
+    return `<div class="adj-preview"><div class="adj-preview-file">📎 <span class="adj-preview-fname">${esc(a.nombre_archivo)}</span></div><button class="adj-rm" onclick="${prefix}Adjuntos.splice(${i},1);renderAdjPreviews('${prefix}')">×</button></div>`;
+  }).join('');
+}
+
+function resetAdjuntos(prefix){
+  if(prefix==='m'){mAdjuntos=[];renderAdjPreviews('m');}
+  else{pvAdjuntos=[];renderAdjPreviews('pv');}
+}
+
 function tapCircle(id){
   const p=pendientes.find(x=>x.id===id);if(!p)return;
   const next=p.estatus==='resuelto'?'pendiente':'resuelto';
@@ -1941,6 +2024,20 @@ function saveRespCfg(){
   if(sb) sbSaveRespCfg();
 }
 
+/* ── LISTA COLORS ── */
+let listaColors={}; // { listaId: '#hexcolor' }
+function loadListaColors(){
+  if(!activeUser)return;
+  const all=JSON.parse(localStorage.getItem(LC_KEY)||'{}');
+  listaColors=all[activeUser.id]||{};
+}
+function saveListaColors(){
+  if(!activeUser)return;
+  const all=JSON.parse(localStorage.getItem(LC_KEY)||'{}');
+  all[activeUser.id]=listaColors;
+  localStorage.setItem(LC_KEY,JSON.stringify(all));
+}
+
 /* COLOR PICKER */
 function openColorPicker(type,id,el){
   cpTarget={type,id};
@@ -1959,9 +2056,10 @@ function closeColorPicker(){document.getElementById('color-picker-pop').classLis
 function pickColor(color){
   if(!cpTarget)return;
   const{type,id}=cpTarget;
-  if(type==='resp'){if(color)respCfg.colors[id]=color;else delete respCfg.colors[id];}
-  else{const g=respCfg.groups.find(x=>x.id===id);if(g)g.color=color||'#6b7280';}
-  saveRespCfg();closeColorPicker();
+  if(type==='resp'){if(color)respCfg.colors[id]=color;else delete respCfg.colors[id];saveRespCfg();}
+  else if(type==='group'){const g=respCfg.groups.find(x=>x.id===id);if(g)g.color=color||'#6b7280';saveRespCfg();}
+  else if(type==='lista'){if(color)listaColors[id]=color;else delete listaColors[id];saveListaColors();}
+  closeColorPicker();
   renderAll();
   if(document.getElementById('grp-panel').classList.contains('open'))renderGroupPanel();
 }
@@ -2178,6 +2276,17 @@ function renderDetailPanel(p){
     chatHtml+=`</div>`;
   }
 
+  // Adjuntos section
+  let adjBlock='';
+  if(p.adjuntos&&p.adjuntos.length){
+    adjBlock=`<div class="det-section-ttl">📎 Adjuntos</div><div class="det-adjuntos">`;
+    p.adjuntos.forEach(a=>{
+      if(a.tipo==='imagen') adjBlock+=`<img src="${a.contenido}" class="det-adj-img" alt="${esc(a.nombre_archivo)}" onclick="this.requestFullscreen?.()">`;
+      else adjBlock+=`<a href="${a.contenido}" download="${esc(a.nombre_archivo)}" class="det-adj-file">📎 <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px">${esc(a.nombre_archivo)}</span></a>`;
+    });
+    adjBlock+=`</div>`;
+  }
+
   document.getElementById('det-body').innerHTML=`
     <div class="det-titulo-wrap">
       <div class="det-titulo" id="det-titulo" contenteditable="false" onblur="quickSaveTitle('${p.id}',this)">${esc(p.texto)}</div>
@@ -2186,6 +2295,7 @@ function renderDetailPanel(p){
     <div class="det-info-grid">${infoRows}</div>
     ${editSection}
     ${clBlock}
+    ${adjBlock}
     ${chatHtml}`;
 
   // Show/hide chat input
@@ -2222,8 +2332,8 @@ function saveDetailEdits(id){
 /* ══ CHAT ══ */
 let chatPendienteId=null;
 
-function triggerChatImg(){chatPendienteId=currentDetailId;document.getElementById('chat-img-inp').click();}
-function triggerChatFile(){chatPendienteId=currentDetailId;document.getElementById('chat-file-inp').click();}
+function triggerChatImg(){chatPendienteId=currentDetailId;}
+function triggerChatFile(){chatPendienteId=currentDetailId;}
 
 function sendChatMsg(){
   const inp=document.getElementById('chat-text-input');const txt=inp.value.trim();if(!txt||!currentDetailId)return;
@@ -2232,22 +2342,27 @@ function sendChatMsg(){
 }
 
 async function handleChatImg(e){
-  const file=e.target.files[0];if(!file||!chatPendienteId)return;
+  const file=e.target.files[0];const pid=chatPendienteId||currentDetailId;
+  if(!file||!pid)return;
   e.target.value='';
   try{
+    // Las imágenes se redimensionan — sin límite de tamaño de entrada
     const b64=await resizeImageForChat(file);
-    addChatMessage(chatPendienteId,{id:genId(),autor_id:activeUser.id,tipo:'imagen',contenido:b64,nombre_archivo:file.name,fecha:new Date().toISOString()});
-  }catch(err){showToast('Error al procesar imagen');}
+    addChatMessage(pid,{id:genId(),autor_id:activeUser.id,tipo:'imagen',contenido:b64,nombre_archivo:file.name,fecha:new Date().toISOString()});
+  }catch(err){showToast('Error al procesar imagen: '+err.message);}
 }
 
 async function handleChatFile(e){
-  const file=e.target.files[0];if(!file||!chatPendienteId)return;
+  const file=e.target.files[0];const pid=chatPendienteId||currentDetailId;
+  if(!file||!pid)return;
   e.target.value='';
-  const MAX=1.5*1024*1024; // 1.5MB limit for base64 storage
-  if(file.size>MAX){showToast(`Archivo demasiado grande (máx 1.5MB)`);return;}
+  const MAX=10*1024*1024;
+  if(file.size>MAX){showToast('Archivo demasiado grande (máx 10MB)');return;}
   const b64=await new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(file);});
-  addChatMessage(chatPendienteId,{id:genId(),autor_id:activeUser.id,tipo:'archivo',contenido:b64,nombre_archivo:file.name,mime_type:file.type,tamaño:file.size,fecha:new Date().toISOString()});
+  addChatMessage(pid,{id:genId(),autor_id:activeUser.id,tipo:'archivo',contenido:b64,nombre_archivo:file.name,mime_type:file.type,tamaño:file.size,fecha:new Date().toISOString()});
 }
+
+
 
 function addChatMessage(pendienteId,msg){
   const p=pendientes.find(x=>x.id===pendienteId);if(!p)return;
@@ -2279,7 +2394,7 @@ function resizeImageForChat(file){
     reader.onload=e=>{
       const img=new Image();
       img.onload=()=>{
-        const MAX=800;let w=img.width,h=img.height;
+        const MAX=1200;let w=img.width,h=img.height;
         if(w>MAX||h>MAX){if(w>h){h=h*MAX/w;w=MAX;}else{w=w*MAX/h;h=MAX;}}
         const c=document.createElement('canvas');c.width=w;c.height=h;
         c.getContext('2d').drawImage(img,0,0,w,h);
