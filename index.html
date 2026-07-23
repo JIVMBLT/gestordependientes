@@ -187,15 +187,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .p-card.inside-lista{border-radius:0;padding:12px 14px;margin-bottom:0;box-shadow:none;border-top:1px solid rgba(60,60,67,.07)}
 .p-card.inside-lista:first-child{border-top:none}
 .p-card.inside-lista:hover{background:#f5f5fa}
-.card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
-.card-texto{font-size:14px;line-height:1.5;flex:1}
+.card-row{display:flex;align-items:flex-start;gap:11px}
+.card-circle{width:22px;height:22px;border-radius:50%;border:2px solid rgba(120,120,128,.35);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;transition:all .2s;margin-top:1px;color:#fff}
+.card-circle.pendiente:hover{border-color:var(--sd-c);background:rgba(52,199,89,.15)}
+.card-circle.en_proceso{border-color:var(--sp-c);background:var(--sp-b);color:var(--sp-c)}
+.card-circle.resuelto{border-color:var(--sd-c);background:var(--sd-c)}
+.card-body{flex:1;min-width:0;cursor:pointer}
+.card-body:hover .card-texto{color:var(--acc)}
+.card-texto{font-size:15px;line-height:1.45;color:var(--t1);letter-spacing:-.2px}
 .card-texto.tachado{text-decoration:line-through;color:var(--tm)}
-.s-badge{padding:3px 9px;border-radius:var(--pill);font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;transition:all .2s;letter-spacing:.1px;white-space:nowrap}
-.s-badge:hover{opacity:.8}
-.s-badge.pendiente{background:var(--sp-b);color:var(--sp-c)}
-.s-badge.en_proceso{background:var(--acc-l);color:var(--acc)}
-.s-badge.resuelto{background:var(--sd-b);color:var(--sd-c)}
-.card-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.card-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
 .mtag{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--tm);background:rgba(120,120,128,.1);padding:2px 8px;border-radius:var(--pill)}
 .mtag.mod{color:var(--acc);background:var(--acc-l);font-weight:500}
 .mtag.vence{color:var(--sp-c);background:var(--sp-b)}
@@ -203,13 +204,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .mtag.resp{color:var(--sd-c);background:var(--sd-b);font-weight:500}
 .mtag.seg{color:var(--seg-c);background:var(--seg-b);font-weight:600}
 .mtag.gen{color:var(--sc-c);background:var(--sc-b);font-weight:500}
-.card-actions{display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(60,60,67,.08);flex-wrap:wrap}
-.act-btn{padding:5px 12px;border-radius:var(--pill);border:none;background:rgba(120,120,128,.1);font-size:12px;color:var(--t2);cursor:pointer;transition:all .2s;font-weight:500}
-.act-btn:hover{background:rgba(120,120,128,.18)}
-.act-btn.resolve{color:var(--sd-c);background:var(--sd-b)}
-.act-btn.resolve:hover{background:#c6f5d4}
-.act-btn.del{color:var(--danger);background:var(--danger-b)}
-.act-btn.del:hover{background:#ffd5d2}
+.card-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.s-badge{padding:3px 9px;border-radius:var(--pill);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s}
+.s-badge.pendiente{background:var(--sp-b);color:var(--sp-c)}
+.s-badge.en_proceso{background:var(--acc-l);color:var(--acc)}
+.s-badge.resuelto{background:var(--sd-b);color:var(--sd-c)}
+.card-del{width:24px;height:24px;border-radius:50%;border:none;background:none;color:var(--tm);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.card-del:hover{background:var(--danger-b);color:var(--danger)}
+.card-actions{display:none}.act-btn{display:none}
 
 /* ── CHECKLIST IN CARD ── */
 .cl-progress-wrap{margin-bottom:8px}
@@ -593,6 +595,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .mig-btn-primary:disabled{opacity:.5;cursor:wait}
 .mig-btn-secondary{padding:8px 14px;background:none;border:1px solid #ff9500;color:#7a4500;border-radius:var(--rsm);font-size:13px;cursor:pointer}
 .mig-btn-link{padding:8px 4px;background:none;border:none;color:#92400e;font-size:13px;cursor:pointer}
+/* ── CHAT BADGE (unread messages) ── */
+.chat-badge{background:var(--danger);color:#fff;border-radius:var(--pill);min-width:18px;height:18px;padding:0 5px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 5px rgba(220,38,38,.4);letter-spacing:.2px}
+
 /* ── PDF EXPORT ── */
 .pdf-export-btn{width:34px;height:34px;border-radius:50%;border:none;background:var(--surface);color:var(--acc);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.1);transition:all .15s;flex-shrink:0}
 .pdf-export-btn:hover{background:var(--acc-l)}
@@ -992,14 +997,13 @@ let impMergeMode=false,impMergeTitle='';
 /* ══ INIT ══ */
 function init(){
   const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();
-  pendientes=JSON.parse(localStorage.getItem(SK)||'[]');
-  listas=JSON.parse(localStorage.getItem(LK)||'[]');
+  // Supabase es la fuente de verdad — no se leen pendientes de localStorage al inicio
+  pendientes=[];
+  listas=[];
   apiKey=localStorage.getItem(AK)||'';
-  // Conectar Supabase de forma nativa
   initSupabase();
   const uid=localStorage.getItem(UK);
   if(uid){
-    // Try to load users from Supabase first, then set active user
     loadUsersFromSupabase().then(()=>{
       const u=USUARIOS.find(x=>x.id===uid);
       if(u) setActiveUser(u,false);
@@ -1029,6 +1033,7 @@ function setActiveUser(u,save=true){
   document.getElementById('no-user-msg').style.display='none';
   if(!apiKey)document.getElementById('api-banner').classList.add('on');
   loadRespCfg();
+  loadChatRead();
   populateSelects();
   document.getElementById('m-fecha').min=new Date().toISOString().split('T')[0];
   document.getElementById('pv-fecha').min=new Date().toISOString().split('T')[0];
@@ -1143,12 +1148,37 @@ function setTab(tab){
   const isImp=tab==='importar',isFechas=tab==='fechas';
   document.getElementById('filter-bar').style.display=(!isImp&&!isFechas)?'flex':'none';
   document.getElementById('seg-filter-bar').style.display=tab==='recordatorios'?'flex':'none';
+  // Colors button for asignados_por_mi
+  const existing=document.getElementById('fc-colors-btn');if(existing)existing.remove();
+  if(tab==='asignados_por_mi'){
+    setTimeout(()=>{
+      const bar=document.getElementById('filter-bar');
+      if(bar&&!document.getElementById('fc-colors-btn')){
+        const btn=document.createElement('button');
+        btn.id='fc-colors-btn';
+        btn.style.cssText='margin-left:auto;padding:4px 10px;border:none;background:rgba(120,120,128,.1);border-radius:var(--pill);font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;white-space:nowrap;flex-shrink:0';
+        btn.textContent='⚙️ Colores';btn.onclick=openGroupPanel;bar.appendChild(btn);
+      }
+    },10);
+  }
   renderAll();
 }
 function updateCaptureVisibility(){} // deprecated — capture is now panel-based
 function setFilter(f){
   activeFilter=f;
   document.querySelectorAll('.fc').forEach(c=>c.classList.toggle('active',c.dataset.f===f));
+  // Show/hide colors button in filter bar
+  const existing=document.getElementById('fc-colors-btn');
+  if(existing) existing.remove();
+  if(activeTab==='asignados_por_mi'){
+    const bar=document.getElementById('filter-bar');
+    const btn=document.createElement('button');
+    btn.id='fc-colors-btn';
+    btn.style.cssText='margin-left:auto;padding:4px 10px;border:none;background:rgba(120,120,128,.1);border-radius:var(--pill);font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;white-space:nowrap;flex-shrink:0';
+    btn.textContent='⚙️ Colores';
+    btn.onclick=openGroupPanel;
+    bar.appendChild(btn);
+  }
   if(activeTab==='recordatorios') renderListaSection();
   else renderLista();
 }
@@ -1340,7 +1370,13 @@ function renderListaSection(){
   });
   // Ungrouped
   const ungrouped=myRecs.filter(p=>!p.lista_id).filter(p=>applyFilter(p)&&applyFiltroSeg(p));
-  ungrouped.sort((a,b)=>{if(a.estatus==='resuelto'&&b.estatus!=='resuelto')return 1;if(b.estatus==='resuelto'&&a.estatus!=='resuelto')return -1;return new Date(b.fecha_creacion)-new Date(a.fecha_creacion);});
+  ungrouped.sort((a,b)=>{
+    if(a.estatus==='resuelto'&&b.estatus!=='resuelto')return 1;
+    if(b.estatus==='resuelto'&&a.estatus!=='resuelto')return -1;
+    const aU=getUnreadCount(a)>0,bU=getUnreadCount(b)>0;
+    if(aU&&!bU)return -1;if(!aU&&bU)return 1;
+    return new Date(b.fecha_creacion)-new Date(a.fecha_creacion);
+  });
   if(ungrouped.length){html+=`<div class="ungrouped-label">Sin lista</div>`;ungrouped.forEach(p=>{html+=renderCard(p,false);});}
   if(!myListas.length&&!ungrouped.length)html+=`<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">Sin recordatorios</div><div class="empty-sub">Toca el botón de abajo para crear uno</div></div>`;
   html+=`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('recordatorio');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Nuevo recordatorio</button>`;
@@ -1416,11 +1452,20 @@ function updateCounts(){
 function renderSegFilterBar(){
   const bar=document.getElementById('seg-filter-bar');
   if(activeTab!=='recordatorios'){bar.style.display='none';return;}
-  const uids=[...new Set(getTabData().filter(p=>p.seguimiento_id).map(p=>p.seguimiento_id))];
-  if(!uids.length){bar.style.display='none';activeSeg='all';return;}
+  const myPends=getTabData();
+  // Collect all unique people involved: seguimiento_id + responsable (if asignado)
+  const uids=new Set();
+  myPends.forEach(p=>{
+    if(p.seguimiento_id) uids.add(p.seguimiento_id);
+    if(p.responsable&&p.responsable!==activeUser.id) uids.add(p.responsable);
+  });
+  if(!uids.size){bar.style.display='none';activeSeg='all';return;}
   bar.style.display='flex';
   let h=`<div class="seg-chip ${activeSeg==='all'?'active':''}" data-seg="all" onclick="setSegFilter('all')">👁 Todos</div>`;
-  uids.forEach(uid=>{const u=USUARIOS.find(x=>x.id===uid);if(u)h+=`<div class="seg-chip ${activeSeg===uid?'active':''}" data-seg="${uid}" onclick="setSegFilter('${uid}')">${u.ini} ${u.nombre.split(' ')[0]}</div>`;});
+  [...uids].forEach(uid=>{
+    const u=USUARIOS.find(x=>x.id===uid);if(!u)return;
+    h+=`<div class="seg-chip ${activeSeg===uid?'active':''}" data-seg="${uid}" onclick="setSegFilter('${uid}')">${u.ini} ${u.nombre.split(' ')[0]}</div>`;
+  });
   bar.innerHTML=h;
 }
 
@@ -1489,7 +1534,13 @@ function renderLista(){
     });
     document.getElementById('lista-pendientes').innerHTML=h+`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('asignado');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Asignar pendiente</button>`;return;
   }
-  list.sort((a,b)=>{if(a.estatus==='resuelto'&&b.estatus!=='resuelto')return 1;if(b.estatus==='resuelto'&&a.estatus!=='resuelto')return -1;return new Date(b.fecha_creacion)-new Date(a.fecha_creacion);});
+  list.sort((a,b)=>{
+    if(a.estatus==='resuelto'&&b.estatus!=='resuelto')return 1;
+    if(b.estatus==='resuelto'&&a.estatus!=='resuelto')return -1;
+    const aU=getUnreadCount(a)>0,bU=getUnreadCount(b)>0;
+    if(aU&&!bU)return -1;if(!aU&&bU)return 1;
+    return new Date(b.fecha_creacion)-new Date(a.fecha_creacion);
+  });
   const addBtn=(['general','asignados_a_mi','fechas'].includes(activeTab))?'':
     activeTab==='general'?`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>setCaptureMode('manual'),60)"><div class="section-add-icon">＋</div>Nuevo pendiente</button>`:'';
   document.getElementById('lista-pendientes').innerHTML=(list.length?list.map(p=>renderCard(p,false)).join(''):renderEmpty())+addBtn;
@@ -1529,8 +1580,24 @@ function renderCard(p,insideLista,borderColor){
     clBlock+=`</div><button class="btn-add-cl-item" onclick="addClItemToCard('${p.id}');event.stopPropagation()">＋ Agregar item</button></div>`;
   }
   const acc=[!res?`<button class="act-btn resolve" onclick="quickResolve('${p.id}')">✅ Resolver</button>`:'',`<button class="act-btn" onclick="openStatusMenu(event,'${p.id}')">🔄 Estado</button>`,`<button class="act-btn del" onclick="confirmDel('${p.id}')">🗑️</button>`].join('');
+  const circleIcon=p.estatus==='resuelto'?'✓':p.estatus==='en_proceso'?'·':'';
   const borderStyle=borderColor?`border-left:4px solid ${borderColor};`:'';
-  return `<div class="p-card ${res?'resuelto':''} ${insideLista?'inside-lista':''}" id="card-${p.id}" style="${borderStyle}"><div class="card-top"><div class="card-clickable" onclick="openDetailPanel('${p.id}')"><div class="card-texto ${res?'tachado':''}">${esc(p.texto)}</div></div><span class="s-badge ${p.estatus}" onclick="openStatusMenu(event,'${p.id}')">${sLabel}</span></div>${clBlock}<div class="card-meta">${meta}</div><div class="card-actions">${acc}</div></div>`;
+  const unread=getUnreadCount(p);
+  return `<div class="p-card ${res?'resuelto':''} ${insideLista?'inside-lista':''}" id="card-${p.id}" style="${borderStyle}">
+    <div class="card-row">
+      <button class="card-circle ${p.estatus}" onclick="tapCircle('${p.id}');event.stopPropagation()" title="${res?'Marcar pendiente':'Marcar resuelto'}">${circleIcon}</button>
+      <div class="card-body" onclick="openDetailPanel('${p.id}')">
+        <div class="card-texto ${res?'tachado':''}">${esc(p.texto)}</div>
+        ${clBlock}
+        <div class="card-meta">${meta}</div>
+      </div>
+      <div class="card-right">
+        ${unread>0?`<span class="chat-badge">${unread}</span>`:''}
+        <span class="s-badge ${p.estatus}" onclick="openStatusMenu(event,'${p.id}')">${sLabel}</span>
+        <button class="card-del" onclick="confirmDel('${p.id}');event.stopPropagation()" title="Eliminar">🗑</button>
+      </div>
+    </div>
+  </div>`;
 }
 function renderEmpty(){const msgs={recordatorios:{icon:'🔔',title:'Sin recordatorios',sub:'Escribe o dicta uno arriba'},asignados_por_mi:{icon:'📤',title:'No has asignado nada',sub:'Asigna un pendiente a alguien de tu equipo'},asignados_a_mi:{icon:'📥',title:'Nada asignado a ti',sub:'Cuando alguien te asigne aparecerá aquí'},general:{icon:'📋',title:'Sin pendientes',sub:'Empieza creando uno'}};const m=msgs[activeTab]||msgs.general;return`<div class="empty"><div class="empty-icon">${m.icon}</div><div class="empty-title">${m.title}</div><div class="empty-sub">${m.sub}</div></div>`;}
 
@@ -1792,7 +1859,42 @@ function ejecutarImport(){
 
 
 /* ══ ACCIONES ══ */
-function quickResolve(id){cambiarEstatus(id,'resuelto');showToast('✅ Resuelto');}
+/* ══ CHAT READ TRACKING ══ */
+const CR_KEY='gmantto_chat_read';
+let chatRead={}; // { pendienteId: lastReadAt }
+
+function loadChatRead(){
+  if(!activeUser)return;
+  const all=JSON.parse(localStorage.getItem(CR_KEY)||'{}');
+  chatRead=all[activeUser.id]||{};
+}
+function saveChatRead(){
+  if(!activeUser)return;
+  const all=JSON.parse(localStorage.getItem(CR_KEY)||'{}');
+  all[activeUser.id]=chatRead;
+  localStorage.setItem(CR_KEY,JSON.stringify(all));
+}
+function markChatRead(pendienteId){
+  chatRead[pendienteId]=new Date().toISOString();
+  saveChatRead();
+}
+function getUnreadCount(p){
+  if(!p.chat||!p.chat.length||!activeUser)return 0;
+  // Only messages from OTHER users are "unread"
+  const others=p.chat.filter(m=>m.autor_id!==activeUser.id);
+  if(!others.length)return 0;
+  const lastRead=chatRead[p.id];
+  if(!lastRead)return others.length;
+  return others.filter(m=>new Date(m.fecha)>new Date(lastRead)).length;
+}
+
+function tapCircle(id){
+  const p=pendientes.find(x=>x.id===id);if(!p)return;
+  const next=p.estatus==='resuelto'?'pendiente':'resuelto';
+  cambiarEstatus(id,next);
+  if(next==='resuelto') showToast('✅ Marcado como resuelto');
+}
+function quickResolve(id){tapCircle(id);}
 function openStatusMenu(e,id){e.stopPropagation();menuTargetId=id;const m=document.getElementById('s-menu');m.classList.add('on');const rect=e.target.getBoundingClientRect();m.style.top=(rect.bottom+6)+'px';m.style.left=Math.min(rect.left,window.innerWidth-175)+'px';}
 function applyStatus(st){if(menuTargetId){cambiarEstatus(menuTargetId,st);showToast('Estado actualizado');menuTargetId=null;}document.getElementById('s-menu').classList.remove('on');}
 function cambiarEstatus(id,st){const p=pendientes.find(x=>x.id===id);if(p){p.estatus=st;savePendientes(id);renderAll();}}
@@ -1803,15 +1905,13 @@ function scrollToCapture(){openCapturePanel(null);}
 
 /* ══ HELPERS ══ */
 function savePendientes(changedId){
-  localStorage.setItem(SK,JSON.stringify(pendientes));
-  // Write changed pendiente to Supabase
+  // Supabase es la fuente única — localStorage solo guarda caché de IDs para sesión
   if(sb&&changedId){
     const p=pendientes.find(x=>x.id===changedId);
     if(p) sbSavePendiente(p);
   }
 }
 function saveListas(changedId){
-  localStorage.setItem(LK,JSON.stringify(listas));
   if(sb&&changedId){const l=listas.find(x=>x.id===changedId);if(l)sbSaveLista(l);}
 }
 function genId(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).substr(2);}
@@ -1965,6 +2065,8 @@ let detailEditMode  = false;
 function openDetailPanel(id){
   const p=pendientes.find(x=>x.id===id);if(!p)return;
   if(!p.chat)p.chat=[];
+  // Mark messages as read
+  if(getUnreadCount(p)>0){markChatRead(id);}
   currentDetailId=id;detailEditMode=false;
   renderDetailPanel(p);
   document.getElementById('detail-panel').classList.add('open');
@@ -1977,6 +2079,9 @@ function openDetailPanel(id){
 function closeDetailPanel(){
   document.getElementById('detail-panel').classList.remove('open');
   currentDetailId=null;
+  // Refresh list to update badges
+  if(activeTab==='recordatorios') renderListaSection();
+  else renderLista();
 }
 
 function renderDetailPanel(p){
@@ -2148,10 +2253,23 @@ function addChatMessage(pendienteId,msg){
   const p=pendientes.find(x=>x.id===pendienteId);if(!p)return;
   if(!p.chat)p.chat=[];
   p.chat.push(msg);
+  // My own message = mark as read immediately
+  if(msg.autor_id===activeUser?.id) markChatRead(pendienteId);
   savePendientes();
   if(currentDetailId===pendienteId){
     renderDetailPanel(p);
     setTimeout(()=>{const m=document.getElementById('det-chat-msgs');if(m)m.scrollTop=m.scrollHeight;},50);
+  } else {
+    // Update badge on card without full re-render
+    const cardEl=document.getElementById(`card-${pendienteId}`);
+    if(cardEl){
+      const unread=getUnreadCount(p);
+      const existing=cardEl.querySelector('.chat-badge');
+      if(unread>0){
+        if(existing)existing.textContent=unread;
+        else{const right=cardEl.querySelector('.card-right');if(right){const b=document.createElement('span');b.className='chat-badge';b.textContent=unread;right.insertBefore(b,right.firstChild);}}
+      } else if(existing) existing.remove();
+    }
   }
 }
 
@@ -2650,21 +2768,21 @@ async function loadFromSupabase(){
     }
 
     if(!pErr&&pends){
-      // Merge checklist items + preserve local chat
+      // Merge checklist items + preserve local chat (no tiene tabla aún)
       const localPends=JSON.parse(localStorage.getItem(SK)||'[]');
       pendientes=pends.map(p=>({
         ...p,
         checklist_items:clItems.filter(c=>c.pendiente_id===p.id).map(c=>({id:c.id,texto:c.texto,completado:c.completado})),
         chat:(localPends.find(lp=>lp.id===p.id)||{}).chat||[]
       }));
-      localStorage.setItem(SK,JSON.stringify(pendientes));
+      // No se guarda en localStorage — Supabase es la fuente
     }
 
     // 4. Listas
     const{data:lsts}=await sb.from('listas_pendientes').select('*').eq('creado_por',uid);
     if(lsts){
       listas=lsts.map(l=>({id:l.id,titulo:l.titulo,creado_por:l.creado_por,open:l.abierta!==false,fecha_creacion:l.fecha_creacion}));
-      localStorage.setItem(LK,JSON.stringify(listas));
+      // No se guarda en localStorage
     }
 
     // 5. Responsable colors
