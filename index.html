@@ -203,6 +203,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .mtag.mod{color:var(--acc);background:var(--acc-l);font-weight:500}
 .mtag.vence{color:var(--sp-c);background:var(--sp-b)}
 .mtag.vencido{color:var(--danger);background:var(--danger-b)}
+.cal-tag-btn{background:none;border:none;padding:0 3px;cursor:pointer;font-size:12px;line-height:1;opacity:.65;transition:opacity .15s;vertical-align:middle}
+.cal-tag-btn:hover{opacity:1}
+.det-cal-btn{display:inline-flex;align-items:center;gap:5px;background:var(--acc-l);color:var(--acc);border:none;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;margin-top:4px}
+.det-cal-btn:hover{background:var(--acc);color:#fff}
 .mtag.resp{color:var(--sd-c);background:var(--sd-b);font-weight:500}
 .mtag.seg{color:var(--seg-c);background:var(--seg-b);font-weight:600}
 .mtag.gen{color:var(--sc-c);background:var(--sc-b);font-weight:500}
@@ -214,6 +218,50 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .card-del{width:24px;height:24px;border-radius:50%;border:none;background:none;color:var(--tm);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .card-del:hover{background:var(--danger-b);color:var(--danger)}
 .card-actions{display:none}.act-btn{display:none}
+
+/* ── GENERAL VIEW TOGGLE ── */
+.gen-view-toggle{display:flex;gap:6px;padding:6px 16px 2px;justify-content:flex-end;align-items:center}
+.gen-view-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;color:var(--fg-sub);transition:all .15s;letter-spacing:-.1px}
+.gen-view-btn.active{background:var(--acc);border-color:var(--acc);color:#fff}
+
+/* ── POST-IT GRID ── */
+.postit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px 14px 80px;align-items:start}
+.postit-card{border-radius:10px;padding:13px 12px 10px;min-height:90px;cursor:default;box-shadow:0 2px 8px rgba(0,0,0,.10);transition:box-shadow .15s,opacity .2s;position:relative;user-select:none;display:flex;flex-direction:column;gap:4px}
+.postit-card.dragging{opacity:.3;transform:scale(.93)}
+.postit-card.drag-over-top{box-shadow:0 -3px 0 var(--acc),0 2px 8px rgba(0,0,0,.12) !important}
+.postit-card.drag-over-bot{box-shadow:0 3px 0 var(--acc),0 2px 8px rgba(0,0,0,.12) !important}
+.postit-tipo{font-size:11px;font-weight:700;opacity:.65;text-transform:uppercase;letter-spacing:.3px}
+.postit-texto{font-size:13.5px;font-weight:500;line-height:1.4;color:var(--fg);display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.postit-texto.tachado{text-decoration:line-through;opacity:.5}
+.postit-footer{display:flex;align-items:center;gap:5px;margin-top:6px}
+.postit-av{width:20px;height:20px;border-radius:50%;font-size:9px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.postit-fecha{font-size:11px;color:rgba(0,0,0,.5);flex:1}
+.postit-est{font-size:12px}
+
+/* ── COLLECTIVE CARD ── */
+.collective-card{background:var(--surface) !important;border:2px dashed var(--border);cursor:default !important;min-height:auto}
+.collective-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.collective-count{font-size:11px;background:var(--border);border-radius:var(--pill);padding:2px 8px;color:var(--fg-sub);font-weight:600}
+.collective-items{display:flex;flex-direction:column;gap:3px;max-height:220px;overflow-y:auto}
+.collective-item{display:flex;align-items:center;gap:6px;padding:5px 4px;border-radius:6px;cursor:pointer;transition:background .12s}
+.collective-item:hover{background:rgba(0,0,0,.04)}
+.collective-item-text{flex:1;font-size:12px;color:var(--fg);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.3}
+.collective-item-text.tachado{text-decoration:line-through;color:var(--tm)}
+.collective-badge{font-size:10px;color:var(--fg-sub);white-space:nowrap;flex-shrink:0}
+.extract-btn{background:none;border:none;cursor:pointer;font-size:12px;opacity:.35;padding:2px 4px;flex-shrink:0;transition:opacity .12s,background .12s;border-radius:4px}
+.extract-btn:hover,.extract-btn:active{opacity:1 !important;background:rgba(0,0,0,.06)}
+.unextract-btn{position:absolute;top:7px;right:8px;background:rgba(0,0,0,.07);border:none;border-radius:6px;padding:2px 7px;font-size:10px;cursor:pointer;color:var(--fg-sub);transition:background .12s;font-weight:600}
+.unextract-btn:hover{background:var(--acc-l);color:var(--acc)}
+.extracted-card{padding-top:26px !important}
+
+/* ── DRAG STATES (extracted post-its, list view) ── */
+.postit-card[draggable="true"]{cursor:grab}
+.postit-card[draggable="true"]:active{cursor:grabbing}
+.p-card[draggable="true"]{cursor:grab}
+.p-card[draggable="true"]:active{cursor:grabbing}
+.p-card.dragging{opacity:.3;box-shadow:none}
+.p-card.drag-over-top{border-top:3px solid var(--acc) !important;padding-top:11px}
+.p-card.drag-over-bot{border-bottom:3px solid var(--acc) !important;padding-bottom:11px}
 
 /* ── CHECKLIST IN CARD ── */
 .cl-progress-wrap{margin-bottom:8px}
@@ -597,6 +645,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
 .mig-btn-primary:disabled{opacity:.5;cursor:wait}
 .mig-btn-secondary{padding:8px 14px;background:none;border:1px solid #ff9500;color:#7a4500;border-radius:var(--rsm);font-size:13px;cursor:pointer}
 .mig-btn-link{padding:8px 4px;background:none;border:none;color:#92400e;font-size:13px;cursor:pointer}
+.resp-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;min-height:0}
+.resp-tag{display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:var(--pill);font-size:11px;font-weight:600;color:#fff}
+.resp-tag .rt-rm{background:none;border:none;color:inherit;cursor:pointer;font-size:13px;opacity:.7;padding:0 0 0 2px;line-height:1}
+.person-filter-bar{display:flex;gap:6px;padding:0 16px 8px;overflow-x:auto;scrollbar-width:none;background:transparent;align-items:center}
+.person-filter-bar::-webkit-scrollbar{display:none}
+.pf-chip{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--pill);font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer;background:var(--surface);border:none;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:all .2s;color:var(--t2)}
+.pf-chip .pf-av{width:18px;height:18px;border-radius:50%;font-size:8px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pf-chip.active{box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.pf-all-chip{padding:4px 10px;border-radius:var(--pill);font-size:11px;font-weight:600;cursor:pointer;background:var(--surface);border:none;box-shadow:0 1px 3px rgba(0,0,0,.08);color:var(--tm);transition:all .2s}
+.pf-all-chip.active{background:var(--t1);color:#fff}
 /* ── ADJUNTOS (crear y detalle) ── */
 .adj-btn-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
 .adj-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px dashed var(--border);border-radius:var(--rsm);font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .15s;background:none;user-select:none;-webkit-user-select:none}
@@ -680,6 +738,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
   <div class="header-top">
     <span class="header-title">📋 Pendientes</span>
     <div style="display:flex;align-items:center;gap:8px">
+      <button class="pdf-export-btn" id="cal-btn" onclick="setTab('fechas')" style="display:none" title="Calendario">📅</button>
       <button class="pdf-export-btn" id="pdf-btn" onclick="openPdfModal()" style="display:none" title="Exportar PDF">⎙</button>
       <div class="id-chip" onclick="openIdModal()">
       <div class="id-av" id="hdr-av">?</div>
@@ -689,20 +748,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
     </div>
   </div>
   <div class="tabs">
-    <button class="tab-btn active" data-tab="recordatorios"    onclick="setTab('recordatorios')">🔔 Recordatorios</button>
-    <button class="tab-btn"        data-tab="asignados_por_mi" onclick="setTab('asignados_por_mi')">📤 Asignados por mí</button>
+    <button class="tab-btn active" data-tab="general"          onclick="setTab('general')">📋 General</button>
+    <button class="tab-btn"        data-tab="recordatorios"   onclick="setTab('recordatorios')">🔔 Recordatorios</button>
+    <button class="tab-btn"        data-tab="asignados_por_mi" onclick="setTab('asignados_por_mi')">📤 Por mí</button>
     <button class="tab-btn"        data-tab="asignados_a_mi"  onclick="setTab('asignados_a_mi')">📥 Para mí</button>
-    <button class="tab-btn"        data-tab="general"          onclick="setTab('general')">📋 General</button>
-    <button class="tab-btn"        data-tab="fechas"           onclick="setTab('fechas')">📅 Fechas</button>
-    <button class="tab-btn imp-tab" data-tab="importar"        onclick="setTab('importar')">📥 Importar</button>
+    <button class="tab-btn imp-tab" data-tab="importar"       onclick="setTab('importar')">📥 Importar</button>
   </div>
   <div class="filter-bar" id="filter-bar">
-    <div class="fc all active" data-f="all"       onclick="setFilter('all')">Todos <span class="n" id="cnt-all">0</span></div>
-    <div class="fc pend"       data-f="pendiente" onclick="setFilter('pendiente')">⏳ Pendiente <span class="n" id="cnt-pend">0</span></div>
+    <div class="fc pend active" data-f="pendiente" onclick="setFilter('pendiente')">⏳ Pendiente <span class="n" id="cnt-pend">0</span></div>
     <div class="fc proc"       data-f="en_proceso" onclick="setFilter('en_proceso')">🔄 En proceso <span class="n" id="cnt-proc">0</span></div>
-    <div class="fc done"       data-f="resuelto"  onclick="setFilter('resuelto')">✅ Resuelto <span class="n" id="cnt-done">0</span></div>
+    <div class="fc done"       data-f="resuelto"   onclick="setFilter('resuelto')">✅ Resuelto <span class="n" id="cnt-done">0</span></div>
+    <div class="fc all"        data-f="all"        onclick="setFilter('all')">Todos <span class="n" id="cnt-all">0</span></div>
   </div>
   <div class="seg-filter-bar" id="seg-filter-bar" style="display:none"></div>
+  <div class="person-filter-bar" id="person-filter-bar" style="display:none"></div>
 </header>
 
 <main class="content" id="main-content">
@@ -861,9 +920,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display'
         <label class="flabel">👁 Relacionado con <span class="opt">(seguimiento)</span></label>
         <div class="sel-w"><select class="f-select" id="m-seg"><option value="">— Sin usuario —</option></select></div>
       </div>
-      <div class="fgroup collapsible hidden" id="m-sec-resp" style="max-height:70px">
-        <label class="flabel">Responsable</label>
-        <div class="sel-w"><select class="f-select" id="m-resp"><option value="">— Seleccionar —</option></select></div>
+      <div class="fgroup collapsible hidden" id="m-sec-resp" style="max-height:200px">
+        <label class="flabel">Responsables</label>
+        <div class="resp-tags" id="m-resp-tags"></div>
+        <div class="sel-w"><select class="f-select" id="m-resp" onchange="addMResp(this.value);this.value=''"><option value="">＋ Agregar responsable…</option></select></div>
       </div>
       <div class="fgroup collapsible hidden" id="m-sec-lista" style="max-height:70px">
         <label class="flabel">Lista <span class="opt">(agrupar en)</span></label>
@@ -1023,7 +1083,10 @@ const USUARIOS=[
 
 /* ══ STATE ══ */
 const SK='gmantto_pend_v3',LK='gmantto_listas_v1',UK='gmantto_pend_user',AK='gmantto_api_key',LC_KEY='gmantto_lista_col';
-let activeUser=null,activeTab='recordatorios',activeFilter='all',activeSeg='all';
+let activeUser=null,activeTab='general',activeFilter='pendiente',activePerson=null,activeSeg='all';
+let generalView=localStorage.getItem('gmantto_gen_view')||'lista';
+let generalOrder=[],draggedId=null;
+let sectionViews={};
 let captureMode='ia',mTipo='recordatorio',mFormato='normal',pvTipo='recordatorio',pvFormato='normal';
 let pendientes=[],listas=[],menuTargetId=null,delTargetId=null;
 let recognition=null,isRecording=false,apiKey='';
@@ -1068,12 +1131,15 @@ function setActiveUser(u,save=true){
   document.getElementById('hdr-av').style.background=u.color;
   document.getElementById('hdr-name').textContent=u.nombre;
   document.getElementById('voice-bubble').style.display='flex';
+  document.getElementById('cal-btn').style.display='flex';
   document.getElementById('pdf-btn').style.display='flex';
   document.getElementById('no-user-msg').style.display='none';
   if(!apiKey)document.getElementById('api-banner').classList.add('on');
   loadRespCfg();
   loadListaColors();
   loadChatRead();
+  loadGeneralOrder();
+  loadSectionViews();
   populateSelects();
   document.getElementById('m-fecha').min=new Date().toISOString().split('T')[0];
   document.getElementById('pv-fecha').min=new Date().toISOString().split('T')[0];
@@ -1153,14 +1219,14 @@ function selectUser(uid){const u=USUARIOS.find(x=>x.id===uid);if(!u)return;setAc
 
 function populateSelects(){
   if(!activeUser)return;
-  // Directores y Líderes pueden asignar a cualquier usuario de la empresa
   const isDirector=activeUser.aut==='Director'||activeUser.aut==='Lider';
   const mates=isDirector
     ? USUARIOS.filter(u=>u.id!==activeUser.id)
     : USUARIOS.filter(u=>u.equipo===activeUser.equipo&&u.id!==activeUser.id);
-  const mOpts='<option value="">— Seleccionar —</option>'+mates.map(u=>`<option value="${u.id}">${u.nombre} · ${u.area}</option>`).join('');
+  // Single resp (IA preview)
+  const mOpts='<option value="">＋ Agregar responsable…</option>'+mates.map(u=>`<option value="${u.id}">${u.nombre} · ${u.area}</option>`).join('');
   ['m-resp','pv-resp'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=mOpts;});
-  // Seguimiento: todos los usuarios
+  // Seguimiento
   const sOpts='<option value="">— Sin usuario —</option>'+USUARIOS.filter(u=>u.id!==activeUser.id).map(u=>`<option value="${u.id}">${u.nombre} · ${u.area}</option>`).join('');
   ['m-seg','pv-seg'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=sOpts;});
   populateListaSelect();
@@ -1183,7 +1249,7 @@ function saveApiKey(){
 
 /* ══ TABS ══ */
 function setTab(tab){
-  activeTab=tab;activeSeg='all';selectedListaId=null;
+  activeTab=tab;activeSeg='all';activePerson=null;selectedListaId=null;
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   const isImp=tab==='importar',isFechas=tab==='fechas';
   document.getElementById('filter-bar').style.display=(!isImp&&!isFechas)?'flex':'none';
@@ -1265,15 +1331,16 @@ function renderMClItems(){
 function onMInput(){document.getElementById('btn-save-m').disabled=document.getElementById('m-texto').value.trim().length<3;}
 function guardarManual(){
   const tarea=document.getElementById('m-texto').value.trim();if(!tarea||tarea.length<3)return;
-  const respId=mTipo==='asignado'?(document.getElementById('m-resp').value||null):activeUser.id;
+  const respId=mTipo==='asignado'?(mResponsables[0]||document.getElementById('m-resp').value||null):activeUser.id;
+  const respArr=mTipo==='asignado'&&mResponsables.length?[...mResponsables]:(respId?[respId]:null);
   const listaId=mTipo==='recordatorio'?(document.getElementById('m-lista').value||null):null;
   const clItems=mFormato==='checklist'?mClItems.filter(i=>i.texto.trim()).map(i=>({id:i.id,texto:i.texto.trim(),completado:false})):[];
-  guardarPendiente({texto:tarea,tipo:mTipo,formato:mFormato,checklist_items:clItems,responsable:respId,seguimiento_id:mTipo==='recordatorio'?document.getElementById('m-seg').value||null:null,lista_id:listaId,modulo_origen:document.getElementById('m-modulo').value||null,registro_id:document.getElementById('m-registro').value.trim()||null,fecha_limite:document.getElementById('m-fecha').value||null,adjuntos:[...mAdjuntos]});
+  guardarPendiente({texto:tarea,tipo:mTipo,formato:mFormato,checklist_items:clItems,responsable:respId,responsables:respArr,seguimiento_id:mTipo==='recordatorio'?document.getElementById('m-seg').value||null:null,lista_id:listaId,modulo_origen:document.getElementById('m-modulo').value||null,registro_id:document.getElementById('m-registro').value.trim()||null,fecha_limite:document.getElementById('m-fecha').value||null,adjuntos:[...mAdjuntos]});
   document.getElementById('m-texto').value='';document.getElementById('m-modulo').value='';
   document.getElementById('m-registro').value='';document.getElementById('m-fecha').value='';
   document.getElementById('m-seg').value='';document.getElementById('m-resp').value='';
   document.getElementById('btn-save-m').disabled=true;
-  mClItems=[];mFormato='normal';setMFormato('normal');setMTipo('recordatorio');resetAdjuntos('m');
+  mClItems=[];mFormato='normal';setMFormato('normal');setMTipo('recordatorio');resetAdjuntos('m');resetMResponsables();
   showHide('m-sec-reg',false);selectedListaId=null;populateListaSelect();
   closeCapturePanel();
 }
@@ -1336,7 +1403,7 @@ function guardarDesdePreview(){
 
 /* ══ SAVE COMÚN ══ */
 function guardarPendiente(data){
-  const nuevo={id:genId(),texto:data.texto,texto_original:data.texto_original||null,creado_por:activeUser.id,responsable:data.responsable,tipo:data.tipo,formato:data.formato||'normal',checklist_items:data.checklist_items||[],seguimiento_id:data.seguimiento_id||null,lista_id:data.lista_id||null,modulo_origen:data.modulo_origen,registro_id:data.registro_id,fecha_limite:data.fecha_limite,estatus:'pendiente',fecha_creacion:new Date().toISOString(),chat:[],adjuntos:data.adjuntos||[]};
+  const nuevo={id:genId(),texto:data.texto,texto_original:data.texto_original||null,creado_por:activeUser.id,responsable:data.responsable,responsables:data.responsables||(data.responsable?[data.responsable]:[]),tipo:data.tipo,formato:data.formato||'normal',checklist_items:data.checklist_items||[],seguimiento_id:data.seguimiento_id||null,lista_id:data.lista_id||null,modulo_origen:data.modulo_origen,registro_id:data.registro_id,fecha_limite:data.fecha_limite,estatus:'pendiente',fecha_creacion:new Date().toISOString(),chat:[],adjuntos:data.adjuntos||[]};
   pendientes.unshift(nuevo);
   savePendientes(nuevo.id);renderAll();showToast('✅ Pendiente guardado');
 }
@@ -1386,7 +1453,19 @@ function renderListaSection(){
   const myRecs=pendientes.filter(p=>p.tipo==='recordatorio'&&p.creado_por===activeUser.id);
   let applyFilter=p=>activeFilter==='all'||p.estatus===activeFilter;
   let applyFiltroSeg=p=>activeSeg==='all'||p.seguimiento_id===activeSeg;
-  let html='';
+  const recToggle=renderViewToggle('recordatorios');
+  // Post-it mode
+  if(getSectionView('recordatorios')==='postit'){
+    const allRecs=myRecs.filter(p=>applyFilter(p)&&applyFiltroSeg(p));
+    const allListas=myListas.filter(lista=>{
+      const children=myRecs.filter(p=>p.lista_id===lista.id);
+      return (activeFilter==='all'&&activeSeg==='all')||children.some(p=>applyFilter(p)&&applyFiltroSeg(p));
+    });
+    const grid=renderSectionPostIt('recordatorios',allRecs,allListas,'🔔 Recordatorios','#fffde7');
+    document.getElementById('lista-pendientes').innerHTML=recToggle+grid;
+    return;
+  }
+  let html=recToggle;
   // Nueva lista button + create row
   html+=`<div class="lista-section-hdr"><button class="btn-nueva-lista" onclick="toggleListaCreate()">📂 Nueva lista</button></div>`;
   if(showListaCreate){html+=`<div class="lista-create-row"><input type="text" id="new-lista-inp" placeholder="Nombre de la lista…" onkeydown="if(event.key==='Enter')crearLista()"><button class="btn-ok" onclick="crearLista()">Crear</button><button class="btn-cancel" onclick="toggleListaCreate()">×</button></div>`;}
@@ -1425,7 +1504,7 @@ function renderListaSection(){
     html+=renderCard(p,false,segColor);
   });}
   if(!myListas.length&&!ungrouped.length)html+=`<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">Sin recordatorios</div><div class="empty-sub">Toca el botón de abajo para crear uno</div></div>`;
-  html+=`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('recordatorio');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Nuevo recordatorio</button>`;
+  html+=`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('recordatorio');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Nuevo recordatorio</button><button class="section-add-btn" style="color:var(--t2);margin-top:4px" onclick="openGroupPanel()"><div class="section-add-icon" style="background:var(--t2)">⚙️</div>Colores y grupos</button>`;
   document.getElementById('lista-pendientes').innerHTML=html;
 }
 
@@ -1464,7 +1543,7 @@ function saveClItemEdit(pendienteId,itemId,el){
 function editClItem(el){el.contentEditable='true';el.focus();el.classList.add('editing');}
 
 /* ══ RENDER PRINCIPAL ══ */
-function getMyPendientes(){return pendientes.filter(p=>p.creado_por===activeUser.id||(p.tipo==='asignado'&&p.responsable===activeUser.id));}
+function getMyPendientes(){return pendientes.filter(p=>p.creado_por===activeUser.id||(p.tipo==='asignado'&&isRespOf(p,activeUser.id)));}
 function getTabData(){
   const me=activeUser.id;
   switch(activeTab){
@@ -1496,23 +1575,45 @@ function updateCounts(){
   document.getElementById('cnt-done').textContent=base.filter(p=>p.estatus==='resuelto').length;
 }
 function renderSegFilterBar(){
-  const bar=document.getElementById('seg-filter-bar');
-  if(activeTab!=='recordatorios'){bar.style.display='none';return;}
-  const myPends=getTabData();
-  // Collect all unique people involved: seguimiento_id + responsable (if asignado)
-  const uids=new Set();
-  myPends.forEach(p=>{
-    if(p.seguimiento_id) uids.add(p.seguimiento_id);
-    if(p.responsable&&p.responsable!==activeUser.id) uids.add(p.responsable);
+  // Seg filter only used internally for recordatorios seguimiento
+  document.getElementById('seg-filter-bar').style.display='none';
+}
+
+function renderPersonFilterBar(){
+  const bar=document.getElementById('person-filter-bar');
+  if(!bar){return;}
+  const isImp=activeTab==='importar'||activeTab==='fechas';
+  if(isImp){bar.style.display='none';return;}
+  // Get all unique "other" people in current section's pendientes (before person filter)
+  const me=activeUser.id;
+  const tempPerson=activePerson; activePerson=null;
+  const sectionPends=getTabData();
+  activePerson=tempPerson;
+  const people=new Map(); // uid → user
+  sectionPends.forEach(p=>{
+    const add=uid=>{if(uid&&uid!==me){const u=USUARIOS.find(x=>x.id===uid);if(u)people.set(uid,u);}};
+    if(p.creado_por!==me) add(p.creado_por);
+    (p.responsables||(p.responsable?[p.responsable]:[])).forEach(add);
+    if(p.seguimiento_id) add(p.seguimiento_id);
   });
-  if(!uids.size){bar.style.display='none';activeSeg='all';return;}
+  if(!people.size){bar.style.display='none';return;}
   bar.style.display='flex';
-  let h=`<div class="seg-chip ${activeSeg==='all'?'active':''}" data-seg="all" onclick="setSegFilter('all')">👁 Todos</div>`;
-  [...uids].forEach(uid=>{
-    const u=USUARIOS.find(x=>x.id===uid);if(!u)return;
-    h+=`<div class="seg-chip ${activeSeg===uid?'active':''}" data-seg="${uid}" onclick="setSegFilter('${uid}')">${u.ini} ${u.nombre.split(' ')[0]}</div>`;
+  const isAll=!activePerson;
+  let h=`<button class="pf-all-chip ${isAll?'active':''}" onclick="setPersonFilter(null)">Todos</button>`;
+  people.forEach((u,uid)=>{
+    const active=activePerson===uid;
+    h+=`<button class="pf-chip ${active?'active':''}" onclick="setPersonFilter('${uid}')" style="${active?'background:'+u.color+';color:#fff':''}">
+      <span class="pf-av" style="background:${u.color}">${u.ini}</span>${u.nombre.split(' ')[0]}
+    </button>`;
   });
   bar.innerHTML=h;
+}
+
+function setPersonFilter(uid){
+  activePerson=uid;
+  renderPersonFilterBar();
+  if(activeTab==='recordatorios') renderListaSection();
+  else renderLista();
 }
 
 function renderLista(){
@@ -1522,9 +1623,14 @@ function renderLista(){
   if(activeTab==='recordatorios'&&activeSeg!=='all')list=list.filter(p=>p.seguimiento_id===activeSeg);
 
   if(activeTab==='asignados_por_mi'){
-    if(!list.length){document.getElementById('lista-pendientes').innerHTML=`<div class="empty"><div class="empty-icon">📤</div><div class="empty-title">No has asignado nada</div><div class="empty-sub">Toca el botón de abajo para asignar un pendiente</div></div><button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('asignado');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Asignar pendiente</button>`;return;}
+    const pmToggle=renderViewToggle('asignados_por_mi');
+    if(!list.length){document.getElementById('lista-pendientes').innerHTML=pmToggle+`<div class="empty"><div class="empty-icon">📤</div><div class="empty-title">No has asignado nada</div><div class="empty-sub">Toca el botón de abajo para asignar un pendiente</div></div><button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('asignado');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Asignar pendiente</button>`;return;}
+    // Post-it view
+    if(getSectionView('asignados_por_mi')==='postit'){
+      document.getElementById('lista-pendientes').innerHTML=pmToggle+renderPostItGrid(list,'por_mi');return;
+    }
     const PALETTE=['#ef4444','#f97316','#f59e0b','#84cc16','#10b981','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#6b7280'];
-    let h=`<div class="config-bar"><button class="btn-manage-groups" onclick="openGroupPanel()">⚙️ Grupos y colores</button></div>`;
+    let h=pmToggle+`<div class="config-bar"><button class="btn-manage-groups" onclick="openGroupPanel()">⚙️ Grupos y colores</button></div>`;
     // 1. Render groups
     const groupedRespIds=new Set(respCfg.groups.flatMap(g=>g.miembros));
     respCfg.groups.forEach(g=>{
@@ -1580,6 +1686,39 @@ function renderLista(){
     });
     document.getElementById('lista-pendientes').innerHTML=h+`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>{setMTipo('asignado');setCaptureMode('manual');},60)"><div class="section-add-icon">＋</div>Asignar pendiente</button>`;return;
   }
+  // General tab: apply custom order + toggle UI
+  if(activeTab==='general'){
+    list=getOrderedList(list);
+    const toggle=`<div class="gen-view-toggle">
+      <button class="gen-view-btn ${generalView==='lista'?'active':''}" onclick="setGeneralView('lista')">≡ Lista</button>
+      <button class="gen-view-btn ${generalView==='postit'?'active':''}" onclick="setGeneralView('postit')">🗒 Notas</button>
+    </div>`;
+    if(generalView==='postit'){
+      document.getElementById('lista-pendientes').innerHTML=toggle+renderGeneralPostIt(list);
+      return;
+    }
+    // Lista view with drag
+    const cards=list.length?list.map(p=>renderCard(p,false,null,true)).join(''):renderEmpty();
+    document.getElementById('lista-pendientes').innerHTML=toggle+cards;
+    return;
+  }
+  // asignados_a_mi: toggle + post-it
+  if(activeTab==='asignados_a_mi'){
+    list.sort((a,b)=>{
+      if(a.estatus==='resuelto'&&b.estatus!=='resuelto')return 1;
+      if(b.estatus==='resuelto'&&a.estatus!=='resuelto')return -1;
+      const aU=getUnreadCount(a)>0,bU=getUnreadCount(b)>0;
+      if(aU&&!bU)return -1;if(!aU&&bU)return 1;
+      return new Date(b.fecha_creacion)-new Date(a.fecha_creacion);
+    });
+    const amToggle=renderViewToggle('asignados_a_mi');
+    if(getSectionView('asignados_a_mi')==='postit'){
+      document.getElementById('lista-pendientes').innerHTML=amToggle+renderPostItGrid(list,'para_mi');return;
+    }
+    document.getElementById('lista-pendientes').innerHTML=amToggle+(list.length?list.map(p=>renderCard(p,false)).join(''):renderEmpty());
+    return;
+  }
+  // All other tabs: default sort
   list.sort((a,b)=>{
     if(a.estatus==='resuelto'&&b.estatus!=='resuelto')return 1;
     if(b.estatus==='resuelto'&&a.estatus!=='resuelto')return -1;
@@ -1587,12 +1726,11 @@ function renderLista(){
     if(aU&&!bU)return -1;if(!aU&&bU)return 1;
     return new Date(b.fecha_creacion)-new Date(a.fecha_creacion);
   });
-  const addBtn=(['general','asignados_a_mi','fechas'].includes(activeTab))?'':
-    activeTab==='general'?`<button class="section-add-btn" onclick="openCapturePanel(null);setTimeout(()=>setCaptureMode('manual'),60)"><div class="section-add-icon">＋</div>Nuevo pendiente</button>`:'';
+  const addBtn=(['asignados_a_mi','fechas'].includes(activeTab))?'':'';
   document.getElementById('lista-pendientes').innerHTML=(list.length?list.map(p=>renderCard(p,false)).join(''):renderEmpty())+addBtn;
 }
 
-function renderCard(p,insideLista,borderColor){
+function renderCard(p,insideLista,borderColor,isDraggable){
   const me=activeUser.id,res=p.estatus==='resuelto';
   const sLabel={pendiente:'⏳ Pendiente',en_proceso:'🔄 En proceso',resuelto:'✅ Resuelto'}[p.estatus];
   let meta='';
@@ -1601,7 +1739,7 @@ function renderCard(p,insideLista,borderColor){
   if(activeTab==='asignados_a_mi'){const c=USUARIOS.find(u=>u.id===p.creado_por);if(c)meta+=`<span class="mtag resp">👤 De: ${c.nombre.split(' ')[0]}</span>`;}
   if(activeTab==='asignados_por_mi'&&!p.responsable)meta+=`<span class="mtag" style="color:#d97706;background:#fffbeb;font-weight:600">⚠️ Sin responsable</span>`;
   if(p.modulo_origen){let lbl=p.modulo_origen.charAt(0).toUpperCase()+p.modulo_origen.slice(1);if(p.registro_id)lbl+=` · ${p.registro_id}`;meta+=`<span class="mtag mod">🔗 ${lbl}</span>`;}
-  if(p.fecha_limite&&!res){const hoy=new Date();hoy.setHours(0,0,0,0);const lim=new Date(p.fecha_limite+'T00:00:00'),diff=Math.round((lim-hoy)/86400000);let fc='vence',ft='';if(diff<0){fc='vencido';ft=`🚨 Hace ${Math.abs(diff)}d`;}else if(diff===0)ft='⚠️ Hoy';else if(diff<=3)ft=`⏰ ${diff}d`;else ft=`📅 ${lim.toLocaleDateString('es-MX',{day:'numeric',month:'short'})}`;meta+=`<span class="mtag ${fc}">${ft}</span>`;}
+  if(p.fecha_limite&&!res){const hoy=new Date();hoy.setHours(0,0,0,0);const lim=new Date(p.fecha_limite+'T00:00:00'),diff=Math.round((lim-hoy)/86400000);let fc='vence',ft='';if(diff<0){fc='vencido';ft=`🚨 Hace ${Math.abs(diff)}d`;}else if(diff===0)ft='⚠️ Hoy';else if(diff<=3)ft=`⏰ ${diff}d`;else ft=`📅 ${lim.toLocaleDateString('es-MX',{day:'numeric',month:'short'})}`;meta+=`<span class="mtag ${fc}">${ft}<button class="cal-tag-btn" onclick="addToCalendar('${p.id}');event.stopPropagation()" title="Agregar al calendario">＋📅</button></span>`;}
   const fc=new Date(p.fecha_creacion);meta+=`<span class="mtag">${fc.toLocaleDateString('es-MX',{day:'numeric',month:'short'})}</span>`;
   if(p.adjuntos&&p.adjuntos.length) meta+=`<span class="mtag adj-count-tag">📎 ${p.adjuntos.length}</span>`;
   let clBlock='';
@@ -1630,7 +1768,8 @@ function renderCard(p,insideLista,borderColor){
   const circleIcon=p.estatus==='resuelto'?'✓':p.estatus==='en_proceso'?'·':'';
   const borderStyle=borderColor?`border-left:4px solid ${borderColor};`:'';
   const unread=getUnreadCount(p);
-  return `<div class="p-card ${res?'resuelto':''} ${insideLista?'inside-lista':''}" id="card-${p.id}" style="${borderStyle}">
+  const dragAttrs=isDraggable?`draggable="true" ondragstart="genDragStart(event,'${p.id}')" ondragover="genDragOver(event,'${p.id}')" ondragleave="genDragLeave(event)" ondrop="genDrop(event,'${p.id}')" ondragend="genDragEnd()"`:'';
+  return `<div class="p-card ${res?'resuelto':''} ${insideLista?'inside-lista':''}" id="card-${p.id}" style="${borderStyle}" ${dragAttrs}>
     <div class="card-row">
       <button class="card-circle ${p.estatus}" onclick="tapCircle('${p.id}');event.stopPropagation()" title="${res?'Marcar pendiente':'Marcar resuelto'}">${circleIcon}</button>
       <div class="card-body" onclick="openDetailPanel('${p.id}')">
@@ -1646,6 +1785,52 @@ function renderCard(p,insideLista,borderColor){
     </div>
   </div>`;
 }
+/* ══ ADD TO CALENDAR (ICS download) ══ */
+function addToCalendar(pid){
+  const p=pendientes.find(x=>x.id===pid);
+  if(!p||!p.fecha_limite){showToast('Sin fecha límite definida');return;}
+  const me=activeUser;
+  const [y,mo,d]=p.fecha_limite.split('-').map(Number);
+  const dtStart=`${y}${String(mo).padStart(2,'0')}${String(d).padStart(2,'0')}`;
+  const nextDay=new Date(y,mo-1,d+1);
+  const dtEnd=`${nextDay.getFullYear()}${String(nextDay.getMonth()+1).padStart(2,'0')}${String(nextDay.getDate()).padStart(2,'0')}`;
+  const dtstamp=new Date().toISOString().replace(/[-:.]/g,'').slice(0,15)+'Z';
+  // Build description
+  let desc=`Pendiente: ${p.texto}`;
+  if(me)desc+=`\\nUsuario: ${me.nombre}`;
+  const resp=p.responsables?.length?p.responsables.map(id=>USUARIOS.find(u=>u.id===id)?.nombre||id).join(', '):null;
+  if(resp)desc+=`\\nResponsable(s): ${resp}`;
+  if(p.modulo_origen)desc+=`\\nMódulo: ${p.modulo_origen}${p.registro_id?' · '+p.registro_id:''}`;
+  desc+=`\\nCreado en Gestor Mantto — BLT Brilliant`;
+  // Escape special chars for ICS
+  const esc2=s=>s.replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+  const summary=esc2(p.texto.length>75?p.texto.slice(0,72)+'...':p.texto);
+  const ics=[
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//BLT Brilliant//Gestor Mantto//ES',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:pend-${pid}@gestormantto.blt`,
+    `DTSTAMP:${dtstamp}`,
+    `DTSTART;VALUE=DATE:${dtStart}`,
+    `DTEND;VALUE=DATE:${dtEnd}`,
+    `SUMMARY:${summary}`,
+    `DESCRIPTION:${esc2(desc)}`,
+    `STATUS:${p.estatus==='resuelto'?'COMPLETED':'CONFIRMED'}`,
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`pendiente-${pid.slice(0,8)}.ics`;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
+  showToast('📅 Abre el archivo .ics para agregar al calendario');
+}
+
 function renderEmpty(){const msgs={recordatorios:{icon:'🔔',title:'Sin recordatorios',sub:'Escribe o dicta uno arriba'},asignados_por_mi:{icon:'📤',title:'No has asignado nada',sub:'Asigna un pendiente a alguien de tu equipo'},asignados_a_mi:{icon:'📥',title:'Nada asignado a ti',sub:'Cuando alguien te asigne aparecerá aquí'},general:{icon:'📋',title:'Sin pendientes',sub:'Empieza creando uno'}};const m=msgs[activeTab]||msgs.general;return`<div class="empty"><div class="empty-icon">${m.icon}</div><div class="empty-title">${m.title}</div><div class="empty-sub">${m.sub}</div></div>`;}
 
 /* ══ FECHAS TAB ══ */
@@ -1971,6 +2156,28 @@ function resetAdjuntos(prefix){
   else{pvAdjuntos=[];renderAdjPreviews('pv');}
 }
 
+/* ══ MÚLTIPLES RESPONSABLES EN FORMULARIO ══ */
+let mResponsables=[]; // array of user IDs
+
+function addMResp(uid){
+  if(!uid||mResponsables.includes(uid))return;
+  mResponsables.push(uid);
+  renderMRespTags();
+}
+function removeMResp(uid){
+  mResponsables=mResponsables.filter(x=>x!==uid);
+  renderMRespTags();
+}
+function renderMRespTags(){
+  const el=document.getElementById('m-resp-tags');if(!el)return;
+  el.innerHTML=mResponsables.map(uid=>{
+    const u=USUARIOS.find(x=>x.id===uid);if(!u)return'';
+    return`<span class="resp-tag" style="background:${u.color}">${u.nombre.split(' ')[0]}<button class="rt-rm" onclick="removeMResp('${uid}')">×</button></span>`;
+  }).join('');
+}
+
+function resetMResponsables(){mResponsables=[];renderMRespTags();}
+
 function tapCircle(id){
   const p=pendientes.find(x=>x.id===id);if(!p)return;
   const next=p.estatus==='resuelto'?'pendiente':'resuelto';
@@ -2009,6 +2216,196 @@ document.addEventListener('click',e=>{
 /* ══ RESP SETTINGS (colores y grupos) ══ */
 const RC_KEY='gmantto_resp_cfg';
 let respCfg={colors:{},groups:[]};
+
+/* ══ GENERAL ORDER + VIEW ══ */
+function loadGeneralOrder(){try{generalOrder=JSON.parse(localStorage.getItem('gmantto_gen_ord_'+(activeUser?.id||''))||'[]');}catch(e){generalOrder=[];}}
+function saveGeneralOrder(){if(!activeUser)return;localStorage.setItem('gmantto_gen_ord_'+activeUser.id,JSON.stringify(generalOrder));}
+function setGeneralView(v){generalView=v;localStorage.setItem('gmantto_gen_view',v);renderLista();}
+
+/* ══ SECTION VIEWS (Recordatorios, Por mí, Para mí) ══ */
+function loadSectionViews(){try{sectionViews=JSON.parse(localStorage.getItem('gmantto_sec_views')||'{}');}catch(e){sectionViews={};}}
+function saveSectionViews(){localStorage.setItem('gmantto_sec_views',JSON.stringify(sectionViews));}
+function getSectionView(tab){if(tab==='general')return generalView;return sectionViews[tab]||'lista';}
+function setSectionView(tab,v){
+  if(tab==='general'){setGeneralView(v);return;}
+  sectionViews[tab]=v;saveSectionViews();
+  if(tab==='recordatorios')renderListaSection();else renderLista();
+}
+function renderViewToggle(tab){
+  const v=getSectionView(tab);
+  return `<div class="gen-view-toggle"><button class="gen-view-btn ${v==='lista'?'active':''}" onclick="setSectionView('${tab}','lista')">≡ Lista</button><button class="gen-view-btn ${v==='postit'?'active':''}" onclick="setSectionView('${tab}','postit')">🗒 Notas</button></div>`;
+}
+/* ── Recordatorios: sub-modo lista/ítem ── */
+/* ══ EXTRACT / UNEXTRACT SYSTEM ══ */
+function getExtracted(key){return new Set(sectionViews['ext_'+key]||[]);}
+function extractItem(key,id){
+  const arr=sectionViews['ext_'+key]||[];
+  if(!arr.includes(id))arr.push(id);
+  sectionViews['ext_'+key]=arr;saveSectionViews();
+  if(key==='recordatorios')renderListaSection();else renderLista();
+}
+function unExtractItem(key,id){
+  sectionViews['ext_'+key]=(sectionViews['ext_'+key]||[]).filter(x=>x!==id);
+  saveSectionViews();
+  if(key==='recordatorios')renderListaSection();else renderLista();
+}
+function renderCollectiveCard(key,pItems,lItems,label,bg){
+  const total=pItems.length+(lItems||[]).length;
+  if(total===0)return '';
+  let rows='';
+  (lItems||[]).forEach(l=>{
+    const lColor=listaColors[l.id]||'#6b7280';
+    const lAll=pendientes.filter(p=>p.lista_id===l.id);
+    const lDone=lAll.filter(p=>p.estatus==='resuelto').length;
+    rows+=`<div class="collective-item" onclick="event.stopPropagation()">
+      <span style="color:${lColor};flex-shrink:0;font-size:12px">&#128193;</span>
+      <div class="collective-item-text">${esc(l.titulo)}</div>
+      <span class="collective-badge">${lDone}/${lAll.length}</span>
+      <button class="extract-btn" onclick="extractItem('${key}','lista_${l.id}');event.stopPropagation()" title="Post-it independiente">&#128204;</button>
+    </div>`;
+  });
+  pItems.forEach(p=>{
+    const res=p.estatus==='resuelto';
+    const est=res?'&#9989;':p.estatus==='en_proceso'?'&#128260;':'&#9203;';
+    rows+=`<div class="collective-item" onclick="openDetailPanel('${p.id}');event.stopPropagation()">
+      <span style="flex-shrink:0;font-size:11px">${est}</span>
+      <div class="collective-item-text ${res?'tachado':''}">${esc(p.texto)}</div>
+      <button class="extract-btn" onclick="extractItem('${key}','${p.id}');event.stopPropagation()" title="Post-it independiente">&#128204;</button>
+    </div>`;
+  });
+  return `<div class="postit-card collective-card" style="background:${bg||'var(--surface)'}">
+    <div class="collective-header"><span class="postit-tipo">${label}</span><span class="collective-count">${total}</span></div>
+    <div class="collective-items">${rows}</div>
+  </div>`;
+}
+function renderPostItCard(p,ctx,extKey){
+  const me=activeUser.id,res=p.estatus==='resuelto';
+  const COLORS={rec:'#fef9c3',out:'#dbeafe',inp:'#d1fae5',res:'#f1f5f9'};
+  let bg=COLORS.rec;
+  if(ctx==='por_mi')bg=COLORS.out;
+  else if(ctx==='para_mi')bg=COLORS.inp;
+  else if(p.tipo==='asignado'){
+    if(p.creado_por===me&&!isRespOf(p,me))bg=COLORS.out;
+    else if(isRespOf(p,me)&&p.creado_por!==me)bg=COLORS.inp;
+  }
+  if(res)bg=COLORS.res;
+  const lbl=ctx==='por_mi'?'&#128196;':ctx==='para_mi'?'&#128195;':p.tipo==='asignado'?(p.creado_por===me&&!isRespOf(p,me)?'&#128196;':'&#128195;'):'&#128276;';
+  const est=res?'&#9989;':p.estatus==='en_proceso'?'&#128260;':'&#9203;';
+  let fechaStr='';
+  if(p.fecha_limite&&!res){const hoy=new Date();hoy.setHours(0,0,0,0);const lim=new Date(p.fecha_limite+'T00:00:00'),d=Math.round((lim-hoy)/86400000);if(d<0)fechaStr=`&#128680;${Math.abs(d)}d`;else if(d===0)fechaStr='&#9888;&#65039;Hoy';else if(d<=3)fechaStr=`&#9200;${d}d`;}
+  const u=USUARIOS.find(x=>x.id===(ctx==='para_mi'?p.creado_por:p.responsable||p.creado_por));
+  const unBtn=extKey?`<button class="unextract-btn" onclick="unExtractItem('${extKey}','${p.id}');event.stopPropagation()">&#8617; Volver</button>`:'';
+  return `<div class="postit-card ${extKey?'extracted-card':''}" id="postit-${p.id}" style="background:${bg}" draggable="${extKey?'true':'false'}" ondragstart="genDragStart(event,'${p.id}')" ondragover="genDragOver(event,'${p.id}')" ondragleave="genDragLeave(event)" ondrop="genDrop(event,'${p.id}')" ondragend="genDragEnd()" onclick="openDetailPanel('${p.id}')">
+    ${unBtn}
+    <div class="postit-tipo">${lbl}</div>
+    <div class="postit-texto ${res?'tachado':''}">${esc(p.texto)}</div>
+    <div class="postit-footer">${u?`<div class="postit-av" style="background:${u.color}">${u.ini}</div>`:''}<span class="postit-fecha">${fechaStr}</span><span class="postit-est">${est}</span></div>
+  </div>`;
+}
+function renderListaPostIt(lista,items,extKey){
+  const done=items.filter(x=>x.estatus==='resuelto').length,total=items.length;
+  const pct=total?Math.round(done/total*100):0;
+  const lColor=listaColors[lista.id]||'#6b7280';
+  const unBtn=extKey?`<button class="unextract-btn" onclick="unExtractItem('${extKey}','lista_${lista.id}');event.stopPropagation()">&#8617; Volver</button>`:'';
+  let rows='';
+  items.forEach(p=>{
+    const res=p.estatus==='resuelto';
+    const est=res?'&#9989;':p.estatus==='en_proceso'?'&#128260;':'&#9203;';
+    rows+=`<div class="collective-item" onclick="openDetailPanel('${p.id}');event.stopPropagation()">
+      <span style="flex-shrink:0;font-size:11px">${est}</span>
+      <div class="collective-item-text ${res?'tachado':''}">${esc(p.texto)}</div>
+    </div>`;
+  });
+  return `<div class="postit-card ${extKey?'extracted-card':''}" id="listapcard-${lista.id}" style="background:#fff;border-left:4px solid ${lColor}">
+    ${unBtn}
+    <div class="postit-tipo" style="color:${lColor}">&#128193; Lista</div>
+    <div class="postit-texto" style="-webkit-line-clamp:2">${esc(lista.titulo)}</div>
+    <div style="margin:5px 0 3px"><div class="cl-bar" style="height:4px"><div class="cl-bar-fill ${pct===100?'done':''}" style="width:${pct}%"></div></div></div>
+    <div class="collective-items" style="max-height:150px">${rows||'<div style="font-size:11px;color:var(--fg-sub);padding:4px">Lista vac&#237;a</div>'}</div>
+    <div class="postit-footer"><span class="postit-fecha">${done}/${total} completados</span></div>
+  </div>`;
+}
+function renderSectionPostIt(key,pItems,lItems,label,bg){
+  const extracted=getExtracted(key);
+  const remP=pItems.filter(p=>!extracted.has(p.id));
+  const extP=pItems.filter(p=>extracted.has(p.id));
+  const remL=(lItems||[]).filter(l=>!extracted.has('lista_'+l.id));
+  const extL=(lItems||[]).filter(l=>extracted.has('lista_'+l.id));
+  let cards='';
+  cards+=renderCollectiveCard(key,remP,remL,label,bg);
+  const ctx=key==='asignados_a_mi'?'para_mi':key==='asignados_por_mi'?'por_mi':'rec';
+  extP.forEach(p=>{cards+=renderPostItCard(p,ctx,key);});
+  extL.forEach(l=>{const items=pItems.filter(x=>x.lista_id===l.id);cards+=renderListaPostIt(l,items,key);});
+  return `<div class="postit-grid">${cards||renderEmpty()}</div>`;
+}
+function renderGeneralPostIt(list){
+  const me=activeUser.id;
+  const extracted=getExtracted('general');
+  const myRecs=list.filter(p=>p.tipo==='recordatorio');
+  const myOut=list.filter(p=>p.tipo==='asignado'&&p.creado_por===me&&!isRespOf(p,me));
+  const myInp=list.filter(p=>p.tipo==='asignado'&&isRespOf(p,me)&&p.creado_por!==me);
+  const myListas=listas.filter(l=>l.creado_por===me&&myRecs.some(p=>p.lista_id===l.id));
+  const remRecs=myRecs.filter(p=>!extracted.has(p.id)&&!p.lista_id);
+  const remL=myListas.filter(l=>!extracted.has('lista_'+l.id));
+  const remOut=myOut.filter(p=>!extracted.has(p.id));
+  const remInp=myInp.filter(p=>!extracted.has(p.id));
+  const extAll=list.filter(p=>extracted.has(p.id));
+  const extListas=myListas.filter(l=>extracted.has('lista_'+l.id));
+  let cards='';
+  if(remRecs.length||remL.length)cards+=renderCollectiveCard('general',remRecs,remL,'&#128276; Recordatorios','#fffde7');
+  if(remOut.length)cards+=renderCollectiveCard('general',remOut,[],'&#128196; Por m&#237;','#e3f2fd');
+  if(remInp.length)cards+=renderCollectiveCard('general',remInp,[],'&#128195; Para m&#237;','#e8f5e9');
+  const getCtx=p=>p.tipo==='recordatorio'?'rec':p.creado_por===me?'por_mi':'para_mi';
+  extAll.forEach(p=>{cards+=renderPostItCard(p,getCtx(p),'general');});
+  extListas.forEach(l=>{const items=list.filter(x=>x.lista_id===l.id);cards+=renderListaPostIt(l,items,'general');});
+  return `<div class="postit-grid">${cards||renderEmpty()}</div>`;
+}
+function getOrderedList(list){
+  if(!generalOrder.length)return list;
+  const om={};generalOrder.forEach((id,i)=>{om[id]=i;});
+  return [...list].sort((a,b)=>{const ai=om[a.id]??9999,bi=om[b.id]??9999;return ai-bi;});
+}
+function genDragStart(ev,pid){
+  draggedId=pid;ev.dataTransfer.effectAllowed='move';
+  setTimeout(()=>document.getElementById('card-'+pid)?.classList.add('dragging'),0);
+  setTimeout(()=>document.getElementById('postit-'+pid)?.classList.add('dragging'),0);
+}
+function genDragOver(ev,targetPid){
+  ev.preventDefault();ev.dataTransfer.dropEffect='move';
+  if(draggedId===targetPid)return;
+  document.querySelectorAll('.drag-over-top,.drag-over-bot').forEach(el=>el.classList.remove('drag-over-top','drag-over-bot'));
+  const el=ev.currentTarget,r=el.getBoundingClientRect();
+  el.classList.add(ev.clientY<r.top+r.height/2?'drag-over-top':'drag-over-bot');
+}
+function genDragLeave(ev){ev.currentTarget.classList.remove('drag-over-top','drag-over-bot');}
+function genDrop(ev,targetPid){
+  ev.preventDefault();
+  if(!draggedId||draggedId===targetPid){genDragEnd();return;}
+  const el=ev.currentTarget,r=el.getBoundingClientRect();
+  const isBefore=ev.clientY<r.top+r.height/2;
+  let list=getTabData();
+  if(activeFilter!=='all')list=list.filter(p=>p.estatus===activeFilter);
+  list=getOrderedList(list);
+  const ids=list.map(p=>p.id);
+  const fromIdx=ids.indexOf(draggedId);
+  if(fromIdx===-1){genDragEnd();return;}
+  ids.splice(fromIdx,1);
+  const toIdx=ids.indexOf(targetPid);
+  ids.splice(isBefore?toIdx:toIdx+1,0,draggedId);
+  generalOrder=ids;saveGeneralOrder();
+  draggedId=null;renderLista();
+}
+function genDragEnd(){
+  draggedId=null;
+  document.querySelectorAll('.dragging').forEach(el=>el.classList.remove('dragging'));
+  document.querySelectorAll('.drag-over-top,.drag-over-bot').forEach(el=>el.classList.remove('drag-over-top','drag-over-bot'));
+}
+function renderPostItGrid(list,ctx){
+  const key=ctx==='por_mi'?'asignados_por_mi':ctx==='para_mi'?'asignados_a_mi':'general';
+  const label=ctx==='por_mi'?'&#128196; Por m&#237;':ctx==='para_mi'?'&#128195; Para m&#237;':'&#128203; Pendientes';
+  const bg=ctx==='por_mi'?'#e3f2fd':ctx==='para_mi'?'#e8f5e9':'var(--surface)';
+  return renderSectionPostIt(key,list,[],label,bg);
+}
 let cpTarget=null; // {type:'resp'|'group', id}
 const CP_PALETTE=['#ef4444','#f97316','#f59e0b','#84cc16','#10b981','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#6b7280','#111827','#7c3aed'];
 
@@ -2213,7 +2610,7 @@ function renderDetailPanel(p){
   if(lista) infoRows+=`<div class="det-info-row"><span class="det-info-lbl">📂 Lista</span><span class="det-info-val">${esc(lista.titulo)}</span></div>`;
   if(seg) infoRows+=`<div class="det-info-row"><span class="det-info-lbl">👁 Seguimiento</span><span class="det-info-val">${seg.nombre}</span></div>`;
   if(p.modulo_origen){let m=p.modulo_origen.charAt(0).toUpperCase()+p.modulo_origen.slice(1);if(p.registro_id)m+=` · ${p.registro_id}`;infoRows+=`<div class="det-info-row"><span class="det-info-lbl">🔗 Módulo</span><span class="det-info-val">${m}</span></div>`;}
-  if(p.fecha_limite){const hoy=new Date();hoy.setHours(0,0,0,0);const lim=new Date(p.fecha_limite+'T00:00:00');const diff=Math.round((lim-hoy)/86400000);let vStr=lim.toLocaleDateString('es-MX',{day:'numeric',month:'short'});if(diff<0)vStr+=` 🚨 (Vencido hace ${Math.abs(diff)}d)`;else if(diff===0)vStr+=' ⚠️ (Hoy)';else if(diff<=3)vStr+=` ⏰ (En ${diff}d)`;infoRows+=`<div class="det-info-row"><span class="det-info-lbl">📅 Vence</span><span class="det-info-val">${vStr}</span></div>`;}
+  if(p.fecha_limite){const hoy=new Date();hoy.setHours(0,0,0,0);const lim=new Date(p.fecha_limite+'T00:00:00');const diff=Math.round((lim-hoy)/86400000);let vStr=lim.toLocaleDateString('es-MX',{day:'numeric',month:'short'});if(diff<0)vStr+=` 🚨 (Vencido hace ${Math.abs(diff)}d)`;else if(diff===0)vStr+=' ⚠️ (Hoy)';else if(diff<=3)vStr+=` ⏰ (En ${diff}d)`;infoRows+=`<div class="det-info-row"><span class="det-info-lbl">📅 Vence</span><div style="display:flex;flex-direction:column;gap:4px"><span class="det-info-val">${vStr}</span><button class="det-cal-btn" onclick="addToCalendar('${p.id}')">📅 Agregar al calendario</button></div></div>`;}
 
   // Checklist block
   let clBlock='';
